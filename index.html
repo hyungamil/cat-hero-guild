@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>캣히어로 : 가이드</title>
+    <title>캣히어로 : 라임 길드 가이드</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <!-- 외부 데이터 파일 로드 (데이터 폴더 경로 반영) -->
-    <script src="data/data.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -104,10 +102,6 @@
             border-right: 3px solid #4ade80;
         }
         
-        .calc-input:focus {
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
-        }
-
         #toast {
             visibility: hidden;
             min-width: 250px;
@@ -130,11 +124,6 @@
             visibility: visible;
             opacity: 1;
             bottom: 100px;
-        }
-        @media (max-width: 768px) {
-            #toast.show {
-                bottom: 80px;
-            }
         }
 
         #login-overlay {
@@ -163,7 +152,6 @@
 
         .char-img { transition: transform 0.3s ease; }
         .group:hover .char-img { transform: scale(1.1) rotate(5deg); }
-        img[style*="display: none"] + i { display: block !important; }
         
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -255,7 +243,7 @@
                         <span class="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-md">2순위</span>
                         <h4 class="font-bold text-orange-700 dark:text-orange-300">VIP 등급</h4>
                     </div>
-                    <p class="text-sm text-gray-600 dark:text-gray-300">초반엔 미미하지만 높아질수록 엄청난 효율! (풀매수 시 80만원↑, 돈값은 확실히 합니다)</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">초반엔 미미하지만 높아질수록 엄청난 효율! (풀매수 시 돈값은 확실히 합니다)</p>
                 </div>
                 <div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-2xl border border-yellow-100 dark:border-yellow-800/50">
                     <div class="flex items-center gap-2 mb-2">
@@ -263,17 +251,6 @@
                         <h4 class="font-bold text-yellow-700 dark:text-yellow-300">각종 패스권</h4>
                     </div>
                     <p class="text-sm text-gray-600 dark:text-gray-300">격전지, 고양이 마을, 도전의 탑, 미니게임 패스 등 가성비가 매우 좋습니다.</p>
-                </div>
-                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800/50">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-md">4순위</span>
-                        <h4 class="font-bold text-blue-700 dark:text-blue-300">이벤트 패키지 / 타임딜</h4>
-                    </div>
-                    <ul class="text-sm text-gray-600 dark:text-gray-300 list-disc list-inside text-xs leading-relaxed">
-                        <li><strong>룬 소환:</strong> 99,000원 = 5,000장</li>
-                        <li><strong>픽업 소환:</strong> 99,000원 = 4,000장</li>
-                        <li><strong>신화 소환:</strong> 약 60만원 = 10,000장</li>
-                    </ul>
                 </div>
             </div>
             <button onclick="closePaymentModal()" class="w-full mt-6 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-3 rounded-xl transition">
@@ -294,7 +271,6 @@
     <aside class="hidden md:flex fixed top-0 left-0 h-full w-64 glass-card flex-col z-50 border-r border-gray-200 dark:border-gray-700">
         <div class="p-6 flex items-center gap-3 cursor-pointer" onclick="goHome()">
             <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-lg overflow-hidden relative">
-                <img src="Clipped_image_20240831_193214.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover absolute inset-0">
                 <i class="fas fa-cat text-xl z-10 relative"></i>
             </div>
             <div>
@@ -315,9 +291,6 @@
             </button>
             <button onclick="openSection('systems')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-target="systems">
                 <i class="fas fa-cogs w-6 text-center"></i> 시스템 공략
-            </button>
-            <button onclick="openSection('guide')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-target="guide">
-                <i class="fas fa-book-open w-6 text-center"></i> 상세 공략
             </button>
             <button onclick="openSection('deck')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-target="deck">
                 <i class="fas fa-layer-group w-6 text-center"></i> 덱 도감
@@ -342,7 +315,6 @@
     <header class="md:hidden fixed top-0 w-full z-50 glass-card h-16 flex items-center justify-between px-5 transition-all duration-300 shadow-sm">
         <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
             <div class="w-9 h-9 rounded-lg bg-brand-500 flex items-center justify-center text-white overflow-hidden relative">
-                <img src="Clipped_image_20240831_193214.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover absolute inset-0">
                 <i class="fas fa-cat text-lg z-10 relative"></i>
             </div>
             <span class="font-display text-lg">CAT HERO</span>
@@ -358,138 +330,49 @@
         <!-- 0. 홈 화면 -->
         <section id="home-screen" class="page-enter">
             <div class="py-6 md:py-10 flex flex-col md:flex-row items-center gap-6">
-                <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-xl flex-shrink-0 animate-bounce-slight bg-yellow-100 relative">
-                    <img src="Clipped_image_20240831_193214.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover absolute inset-0">
-                    <i class="fas fa-paw text-4xl text-yellow-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0" style="display:none"></i>
+                <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-xl flex-shrink-0 animate-bounce-slight bg-yellow-100 flex items-center justify-center">
+                    <i class="fas fa-paw text-4xl text-yellow-500"></i>
                 </div>
                 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl md:text-4xl font-display mb-2 text-gray-800 dark:text-white leading-tight">
-                        <span class="text-brand-500">환영합니다!</span><br>캣히어로 완벽 공략집
+                        <span class="text-brand-500">환영합니다!</span><br>라임 길드 전용 공략집
                     </h1>
-                    <div class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-50 to-teal-50 dark:from-gray-800 dark:to-gray-800 border border-brand-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 group cursor-default">
+                    <div class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-50 to-teal-50 dark:from-gray-800 dark:to-gray-800 border border-brand-200 dark:border-gray-700 shadow-sm">
                         <span class="text-xs uppercase tracking-wider font-bold text-gray-400 dark:text-gray-500">Created by</span>
-                        <span class="font-display text-lg bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-teal-600 dark:from-brand-400 dark:to-teal-400 group-hover:scale-105 transition-transform">늑대벼리</span>
-                        <i class="fas fa-pen-nib text-brand-400 text-xs ml-1"></i>
+                        <span class="font-display text-lg bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-teal-600 dark:from-brand-400 dark:to-teal-400">늑대벼리</span>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mt-6">
-                <!-- 메뉴 버튼들 -->
-                <button onclick="openSection('schedule')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all text-left flex flex-col items-center gap-3 border-t-4 border-blue-500 group relative overflow-hidden">
-                    <div class="w-16 h-16 rounded-xl bg-blue-100/50 flex items-center justify-center overflow-hidden shadow-inner relative">
-                        <img src="Clipped_image_20240831_190611.png" onerror="this.style.display='none'" class="w-full h-full object-contain char-img absolute inset-0">
-                    </div>
-                    <div class="text-center">
-                        <h2 class="font-display text-lg mb-1">일정 & 미션</h2>
-                        <p class="text-xs text-gray-500">뽑기, 합성</p>
-                    </div>
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mt-6">
+                <button onclick="openSection('schedule')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all flex flex-col items-center gap-3 border-t-4 border-blue-500 group">
+                    <i class="fas fa-calendar-alt text-3xl text-blue-500"></i>
+                    <h2 class="font-display text-lg">일정 & 미션</h2>
                 </button>
-
-                <button onclick="openSection('growth')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all text-left flex flex-col items-center gap-3 border-t-4 border-yellow-500 group relative overflow-hidden">
-                    <div class="w-16 h-16 rounded-xl bg-yellow-100/50 flex items-center justify-center overflow-hidden shadow-inner relative">
-                        <img src="Clipped_image_20240831_163136.jpg" onerror="this.style.display='none'" class="w-full h-full object-contain char-img absolute inset-0">
-                    </div>
-                    <div class="text-center">
-                        <h2 class="font-display text-lg mb-1">성장 & VIP</h2>
-                        <p class="text-xs text-gray-500">녹턴, VIP</p>
-                    </div>
+                <button onclick="openSection('growth')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all flex flex-col items-center gap-3 border-t-4 border-yellow-500 group">
+                    <i class="fas fa-chart-line text-3xl text-yellow-500"></i>
+                    <h2 class="font-display text-lg">성장 & VIP</h2>
                 </button>
-                
-                <button onclick="openSection('systems')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all text-left flex flex-col items-center gap-3 border-t-4 border-slate-500 group relative overflow-hidden">
-                    <div class="w-16 h-16 rounded-xl bg-slate-100/50 flex items-center justify-center shadow-inner text-slate-500">
-                        <i class="fas fa-folder-open text-3xl"></i>
-                    </div>
-                    <div class="text-center">
-                        <h2 class="font-display text-lg mb-1">시스템 공략 모음</h2>
-                        <p class="text-xs text-gray-500">마을, 도탑, 메달 등</p>
-                    </div>
+                <button onclick="openSection('systems')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all flex flex-col items-center gap-3 border-t-4 border-slate-500 group">
+                    <i class="fas fa-cogs text-3xl text-slate-500"></i>
+                    <h2 class="font-display text-lg">시스템 공략</h2>
                 </button>
-
-                <button onclick="openSection('guide')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all text-left flex flex-col items-center gap-3 border-t-4 border-red-500 group relative overflow-hidden">
-                    <div class="w-16 h-16 rounded-xl bg-red-100/50 flex items-center justify-center overflow-hidden shadow-inner relative">
-                        <img src="Clipped_image_20240831_192408.png" onerror="this.style.display='none'" class="w-full h-full object-contain char-img absolute inset-0">
-                    </div>
-                    <div class="text-center">
-                        <h2 class="font-display text-lg mb-1">상세 공략</h2>
-                        <p class="text-xs text-gray-500">룬/탈것/장비</p>
-                    </div>
-                </button>
-
-                <button onclick="openSection('deck')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all text-left flex flex-col items-center gap-3 border-t-4 border-green-500 group relative overflow-hidden">
-                    <div class="w-16 h-16 rounded-xl bg-green-100/50 flex items-center justify-center overflow-hidden shadow-inner relative">
-                        <img src="Clipped_image_20240831_153500.jpg" onerror="this.style.display='none'" class="w-full h-full object-contain char-img absolute inset-0">
-                    </div>
-                    <div class="text-center">
-                        <h2 class="font-display text-lg mb-1">덱 도감</h2>
-                        <p class="text-xs text-gray-500">1~3신화 덱</p>
-                    </div>
-                </button>
-
-                <button onclick="openSection('calculator')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all text-left flex flex-col items-center gap-3 border-t-4 border-indigo-500 group relative overflow-hidden">
-                    <div class="w-16 h-16 rounded-xl bg-indigo-100/50 flex items-center justify-center shadow-inner relative">
-                        <img src="Clipped_image_20240831_192015.png" onerror="this.style.display='none'" class="w-full h-full object-contain char-img absolute inset-0">
-                    </div>
-                    <div class="text-center">
-                        <h2 class="font-display text-lg mb-1">격추 계산기</h2>
-                        <p class="text-xs text-gray-500">점수 자동 계산</p>
-                    </div>
-                </button>
-                
-                <button onclick="openSection('store')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all text-left flex flex-col items-center gap-3 border-t-4 border-gray-500 group relative overflow-hidden">
-                    <div class="w-16 h-16 rounded-xl bg-gray-100/50 flex items-center justify-center overflow-hidden shadow-inner relative">
-                        <img src="Clipped_image_20240831_153256.jpg" onerror="this.style.display='none'" class="w-full h-full object-contain char-img absolute inset-0">
-                    </div>
-                    <div class="text-center">
-                        <h2 class="font-display text-lg mb-1">문의 & 스토어</h2>
-                        <p class="text-xs text-gray-500">웹스토어, 문의</p>
-                    </div>
+                <button onclick="openSection('deck')" class="glass-card p-5 rounded-3xl hover:scale-[1.02] transition-all flex flex-col items-center gap-3 border-t-4 border-green-500 group">
+                    <i class="fas fa-layer-group text-3xl text-green-500"></i>
+                    <h2 class="font-display text-lg">덱 도감</h2>
                 </button>
             </div>
         </section>
 
-        <!-- 1. 일정/뽑기 -->
+        <!-- 1. 일정/미션 -->
         <section id="schedule" class="hidden page-enter">
             <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors">
                 <i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span>
             </button>
-            <h2 class="text-3xl font-display mb-6 md:mb-8 text-gray-800 dark:text-white">일정 및 미션</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- 데이터 기반 리스트 생략 (JS에서 처리) -->
-                <div class="glass-card rounded-3xl p-6">
-                    <h3 class="font-bold text-xl mb-4 text-blue-600 flex items-center"><i class="fas fa-sync-alt mr-2"></i>주간 뽑기 순서</h3>
-                    <div class="space-y-6" id="draw-schedule">
-                        <!-- 스크립트에서 자동 생성 또는 하드코딩된 부분 유지 가능 -->
-                        <div>
-                            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded mb-2 inline-block">신화 (1주 간격)</span>
-                            <ol class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                                <li>1. 라이칸 ➔ 오라클 ➔ 옥타리온 ➔ 캣틀쉽</li>
-                                <li>2. 쿠무루 ➔ 테론 ➔ 이블리스 ➔ 페페</li>
-                                <li>3. 메카네코 ➔ 보안관잭 ➔ 샤크스톤 ➔ 펜리르</li>
-                                <li>4. 잭모어 ➔ 샤크프릿 ➔ 잭블루 ➔ 미르크</li>
-                                <li>5. 블래스트 ➔ 우가루스 ➔ 럭스 ➔ 파이로스</li>
-                                <li>6. 아카네코 ➔ 카르툰 ➔ 라이칸 ➔ 오라클</li>
-                                <li>7. 옥타리온 ➔ 캣틀쉽 ➔ 쿠무루 ➔ 테론</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <!-- 합성 미션 부분 등 구조 유지 -->
-                <div class="glass-card rounded-3xl p-6 border-t-4 border-green-500">
-                    <h3 class="font-bold text-xl mb-4 text-green-600 flex items-center"><i class="fas fa-check-circle mr-2"></i>합성 이벤트 미션</h3>
-                    <div class="space-y-4 text-xs md:text-sm h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                        <!-- 합성 미션 내용들 -->
-                        <div class="bg-green-50 dark:bg-green-900/20 p-3 rounded-xl">
-                            <strong class="block text-green-700 dark:text-green-300 mb-2 border-b border-green-200 dark:border-green-700 pb-1">💎 선택 룬</strong>
-                            <ul class="space-y-1 text-gray-600 dark:text-gray-300">
-                                <li>• 희귀합성 (1,3,5,8,10회): 희귀 선택</li>
-                                <li>• 영웅합성 (3,5,8,10회): 영웅 선택</li>
-                                <li>• 전설합성 (1,2,3회): 전설 선택</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            <h2 class="text-3xl font-display mb-6 text-gray-800 dark:text-white">일정 및 미션</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="synthesis-container">
+                <!-- JS에서 동적 생성 -->
             </div>
         </section>
 
@@ -500,15 +383,13 @@
             </button>
             <h2 class="text-3xl font-display mb-6 text-gray-800 dark:text-white">성장 & VIP</h2>
             <div class="glass-card p-6 rounded-3xl overflow-hidden mb-8">
-                <h3 class="font-bold text-lg mb-4">VIP 등급 혜택</h3>
+                <h3 class="font-bold text-lg mb-4">VIP 등급별 혜택</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead class="bg-gray-100 dark:bg-gray-800">
-                            <tr><th class="px-3 py-2 text-left">등급</th><th class="px-3 py-2 text-left">누적</th><th class="px-3 py-2 text-left">상세 혜택</th></tr>
+                            <tr><th class="px-3 py-2 text-left">등급</th><th class="px-3 py-2 text-left">누적 금액</th><th class="px-3 py-2 text-left">주요 혜택</th></tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700" id="vip-table">
-                            <!-- VIP 테이블 로직 유지 -->
-                        </tbody>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700" id="vip-table-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -520,48 +401,55 @@
             </div>
         </section>
 
-        <!-- 기타 섹션들 (구조만 남김) -->
-        <section id="guide" class="hidden page-enter">
-            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors"><i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span></button>
-            <h2 class="text-3xl font-display mb-6 text-gray-800 dark:text-white">상세 공략</h2>
-            <!-- 공략 내용들 -->
+        <!-- 3. 시스템 공략 -->
+        <section id="systems" class="hidden page-enter">
+            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors">
+                <i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span>
+            </button>
+            <h2 class="text-3xl font-display mb-6 text-gray-800 dark:text-white">시스템 가이드</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="systems-container">
+                <!-- 트로피, 각성 등 데이터 표시 -->
+            </div>
         </section>
 
+        <!-- 4. 덱 도감 -->
         <section id="deck" class="hidden page-enter">
-            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors"><i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span></button>
+            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors">
+                <i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span>
+            </button>
             <h2 class="text-3xl font-display mb-6 text-gray-800 dark:text-white">최강 덱 도감</h2>
             <div id="deck-container" class="space-y-8"></div>
         </section>
 
+        <!-- 5. 계산기 -->
         <section id="calculator" class="hidden page-enter">
-            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors"><i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span></button>
+            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors">
+                <i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span>
+            </button>
             <h2 class="text-3xl font-display mb-6 text-gray-800 dark:text-white">격추 점수 계산기</h2>
             <div class="max-w-md mx-auto">
                 <div class="glass-card rounded-3xl overflow-hidden shadow-xl">
-                    <div class="bg-indigo-600 p-6 text-center text-white"><h3 class="text-2xl font-bold">점수 계산기</h3></div>
+                    <div class="bg-indigo-600 p-6 text-center text-white"><h3 class="text-2xl font-bold">격추율 입력 (%)</h3></div>
                     <div class="p-6 space-y-6 bg-white dark:bg-gray-800">
-                        <input type="number" id="calc-percent" oninput="calculateScore()" placeholder="예: 40" class="w-full bg-gray-50 dark:bg-gray-900 border rounded-xl py-4 px-4 text-xl">
-                        <div class="bg-gray-900 rounded-xl p-6 text-center"><div id="calc-result" class="text-4xl font-bold text-white">85,500 점</div></div>
+                        <input type="number" id="calc-percent" oninput="calculateScore()" placeholder="예: 40" class="w-full bg-gray-50 dark:bg-gray-900 border rounded-xl py-4 px-4 text-xl text-center focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        <div class="bg-gray-900 rounded-xl p-6 text-center">
+                            <p class="text-gray-400 text-xs mb-1 uppercase tracking-widest font-bold">예상 점수</p>
+                            <div id="calc-result" class="text-4xl font-bold text-white">85,500 점</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="systems" class="hidden page-enter">
-            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors"><i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span></button>
-            <h2 class="text-3xl font-display mb-6 text-gray-800 dark:text-white">시스템 가이드</h2>
-            <div id="systems-content" class="space-y-8">
-                <!-- 시스템 공략 데이터들 -->
-            </div>
-        </section>
-
+        <!-- 6. 스토어/문의 -->
         <section id="store" class="hidden page-enter">
-            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors"><i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span></button>
+            <button onclick="goHome()" class="mb-4 flex items-center gap-2 text-gray-500 hover:text-brand-500 transition-colors">
+                <i class="fas fa-arrow-left"></i> <span class="font-bold text-sm">뒤로가기</span>
+            </button>
             <h2 class="text-3xl font-display mb-6 text-gray-800 dark:text-white">문의 & 웹스토어</h2>
-            <div class="max-w-md mx-auto space-y-6" id="store-links">
-                <!-- 스토어 링크 등 -->
-                <button onclick="copyEmail()" class="glass-card p-6 rounded-3xl flex items-center gap-6 w-full text-left group">
-                    <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center text-3xl"><i class="fas fa-envelope"></i></div>
+            <div class="max-w-md mx-auto space-y-6">
+                <button onclick="copyEmail()" class="glass-card p-6 rounded-3xl flex items-center gap-6 w-full text-left group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-3xl text-brand-600"><i class="fas fa-envelope"></i></div>
                     <div>
                         <h3 class="text-xl font-bold mb-1">개발자 문의</h3>
                         <p class="text-sm text-gray-500">cathero@gameduo.net</p>
@@ -574,31 +462,76 @@
 
     <script>
         /**
-         * 데이터 처리 로직 (data.js의 변수를 사용함)
+         * 1. 데이터 정의 (데이터.js를 여기로 통합)
          */
+        const GAME_DATA = {
+            vipBenefits: [
+                { grade: "광고제거", total: "9,900", benefits: "광고제거, 영구 버프(30%최대)" },
+                { grade: "VIP", total: "19,800", benefits: "장비 거래소 오픈, 금화x2, 던전20%, 어항30, 대포30, 스킬10", highlight: true },
+                { grade: "VVIP", total: "38,800", benefits: "금화x5, 던전50%, 어항60, 대포100, 스킬30, 룬5" },
+                { grade: "VVVIP", total: "71,800", benefits: "금화x10, 던전100%, 어항100, 대포150, 스킬50, 동료10, 룬10" },
+                { grade: "VVVVIP", total: "126,800", benefits: "금화x2, 던전200%, 어항200, 대포300, 스킬100, 동료20, 룬20, 탈것1" },
+                { grade: "VIP S", total: "201,800", benefits: "금화x50, 던전400%, 어항400, 대포400, 스킬150, 동료40, 룬40, 탈것2" },
+                { grade: "VIP Dia", total: "570,800", benefits: "금화x400, 던전1000%, 어항1000, 대포800, 스킬400, 동료100, 룬100, 빛재련5, 재련20, 탈것7, 신화픽업20, 외형재료10, 마을상자1", theme: "blue" },
+                { grade: "Sapphire", total: "1,020,800", benefits: "금화x1000, 던전1600%, 어항1400, 대포1400, 스킬700, 동료180, 룬180, 빛재련20, 재련70, 탈것20, 신화픽업70, 외형재료40, 마을상자4, 외형소환4, 영혼석+1", theme: "darkblue" }
+            ],
+            nocturneRewards: [
+                {lv:1, r:"동료뽑 600", s:0}, {lv:2, r:"스킬뽑 900", s:0}, {lv:5, r:"동뽑 150, 전설동료1", s:0}, {lv:9, r:"신뽑 550", s:0},
+                {lv:10, r:"픽업 1000, 스킬북5", s:0}, {lv:17, r:"픽업 3000, 룬뽑 3000", s:1}, {lv:23, r:"신뽑 1000, 블다 15000", s:3},
+                {lv:50, r:"룬뽑 3000, 스킬북 20", s:1}, {lv:86, r:"신화선택권 1개, 신뽑 1300장", s:3}
+            ],
+            decks: {
+                myth1: [
+                    { title: "🐱 고양이 덱 2 (효율)", type: "cat", members: "캣틀쉽, 캣머신, 스타링, 룰루, 잭타이거, 잭스트라이커", skills: "마법방패, 캣히어로즈, 바다의처형, 포식자낙인, 고양이광선, 해적표식", runes: "캣히어로즈 강화, 고양이 광선 소환, 상어 표식 강화", desc: "1신화 최고효율 덱. 캣틀쉽 1성도 사용 가능." },
+                    { title: "🐺 늑대 덱 (가성비 甲)", type: "wolf", members: "우가루스, 웨어울프, 워울프, 그롬, 루나스틸, 스타링", skills: "하울링, 블랙홀, 사냥개시, 보름달, 달의분노, 야성본능", runes: "야성본능, 할퀴기, 사냥개시", desc: "신화 1성이여도 사용 가능한 가성비 최고의 덱." }
+                ],
+                myth2: [
+                    { title: "🐱 고양이 덱 1 (오라클)", type: "cat", members: "오라클, 쿠무루, 룰루, 로로, 스타링, 잭스트라이커", skills: "마법방패, 캣히어로즈, 고양이신선, 바다의처형, 해적표식, 슈퍼캣", runes: "고양이 신선 강화, 캣히어로즈 강화", desc: "쿠무루+오라클 시너지로 2신화 최고점. 3신화 넘어가기 수월." },
+                    { title: "🏴‍☠️ 해적 덱 2 (국밥)", type: "pirate", members: "잭모어, 잭블루, 잭도우, 잭플라이, 스타링, 잭스트라이커", skills: "고래함선, 고래총공격, 포식자낙인, 바다의처형, 초토화, 마법방패", runes: "고래 총공격, 고래함선, 상어 표식", desc: "명실불허 2신화 1티어. 3신화도 이길 수 있음." }
+                ],
+                myth3: [
+                    { title: "☠️ 고양이 덱 3 (PvP)", type: "cat", members: "이블리스, 아카네코, 메카네코, 룰루, 베스퍼, 스타링", skills: "발도술, 캣히어로즈, 사신의 계약, 종말의탄환, 해적표식, 마법방패", runes: "발도술강화, 캣히어로즈강화, 종말의탄환강화", desc: "극단적 PvP 덱. 동스펙 기준 최강." }
+                ]
+            },
+            synthesisMissions: {
+                specialRunes: {
+                    rare: "희귀합성 (1,3,5,8,10회): 희귀 선택",
+                    hero: "영웅합성 (3,5,8,10회): 영웅 선택",
+                    legend: "전설합성 (1,2,3회): 전설 선택"
+                },
+                generalRunes: [
+                    "룬소환서 100장: 랜덤특수룬소환 1개",
+                    "고급특수룬 합성 10회: 희귀특수룬소환 1개",
+                    "ALL 클리어 보상: 전설특수룬소환 1개"
+                ]
+            },
+            hiddenTrophies: [
+                "어항 수집가: 어항 충전 키트 누적 10만개",
+                "진짜 VIP: VIP 블랙 이상",
+                "이장님: 고양이 회관 30레벨",
+                "파괴 왕: 장비 분해 20회"
+            ]
+        };
 
-        // --- 1. PASSWORD LOGIC ---
+        /**
+         * 2. 기능 로직
+         */
         function checkPassword() {
             const input = document.getElementById('password-input').value;
             const msg = document.getElementById('login-msg');
-            
             if (input === '라임 최고') { 
                 document.getElementById('login-overlay').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('login-overlay').style.display = 'none';
-                }, 500);
+                setTimeout(() => { document.getElementById('login-overlay').style.display = 'none'; }, 500);
                 sessionStorage.setItem('isLoggedIn', 'true');
             } else {
                 msg.innerText = '비밀번호가 일치하지 않습니다.';
                 document.getElementById('password-input').value = '';
             }
         }
-
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('login-overlay').style.display = 'none';
         }
 
-        // --- 2. NAVIGATION ---
         function goHome() { openSection('home-screen'); }
 
         function openSection(id) {
@@ -609,16 +542,20 @@
                 target.classList.add('page-enter');
                 window.scrollTo(0,0);
             }
-            updateNav(id);
-        }
-
-        function updateNav(activeId) {
             document.querySelectorAll('.sidebar-btn').forEach(btn => {
-                btn.classList.toggle('sidebar-active', btn.dataset.target === activeId);
+                btn.classList.toggle('sidebar-active', btn.dataset.target === id);
             });
         }
-        
-        // --- 3. CORE FUNCTIONS ---
+
+        function calculateScore() {
+            const percent = parseFloat(document.getElementById('calc-percent').value);
+            const display = document.getElementById('calc-result');
+            const BASE = 85500;
+            const PER = 300;
+            const score = isNaN(percent) ? BASE : (percent * PER) + BASE;
+            display.innerText = score.toLocaleString() + " 점";
+        }
+
         function copyEmail() {
             const email = "cathero@gameduo.net";
             const textArea = document.createElement("textarea");
@@ -627,22 +564,9 @@
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-            showToast();
-        }
-
-        function showToast() {
             const toast = document.getElementById("toast");
             toast.className = "show";
             setTimeout(() => { toast.className = ""; }, 3000);
-        }
-        
-        function calculateScore() {
-            const percent = parseFloat(document.getElementById('calc-percent').value);
-            const display = document.getElementById('calc-result');
-            const BASE = 85500;
-            const PER = 300;
-            const score = isNaN(percent) ? BASE : (percent * PER) + BASE;
-            display.innerText = score.toLocaleString() + " 점";
         }
 
         function openPaymentModal() {
@@ -657,69 +581,95 @@
             setTimeout(() => m.classList.add('hidden'), 300);
         }
 
-        // --- 4. RENDER FUNCTIONS (Using Global Data) ---
-        function renderDecks() {
-            const container = document.getElementById('deck-container');
-            if(!container || !window.deckData) return;
-            container.innerHTML = ''; 
-
+        /**
+         * 3. 렌더링 함수
+         */
+        function renderAll() {
+            // 덱 렌더링
+            const deckContainer = document.getElementById('deck-container');
             const config = [
-                { id: '1myth', label: '1신화', color: 'blue' },
-                { id: '2myth', label: '2신화', color: 'purple' },
-                { id: '3myth', label: '3신화', color: 'red' }
+                { id: 'myth1', label: '1신화', color: 'blue' },
+                { id: 'myth2', label: '2신화', color: 'purple' },
+                { id: 'myth3', label: '3신화', color: 'red' }
             ];
-
             config.forEach(conf => {
-                const decks = window.deckData[conf.id];
-                if (!decks) return;
-
+                const decks = GAME_DATA.decks[conf.id];
                 const wrap = document.createElement('div');
-                wrap.className = 'space-y-4 pt-4 border-t border-dashed border-gray-300 first:border-0';
-                wrap.innerHTML = `<div class="flex items-center gap-2 mb-4"><span class="bg-${conf.color}-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">${conf.id[0]}</span><h3 class="font-bold text-xl">${conf.label} 추천</h3></div>`;
-                
+                wrap.innerHTML = `<h3 class="font-bold text-xl mb-4 border-l-4 border-${conf.color}-500 pl-3">${conf.label} 추천</h3>`;
                 const grid = document.createElement('div');
-                grid.className = 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4';
-
+                grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
                 decks.forEach(deck => {
-                    const card = document.createElement('div');
-                    let color = deck.type === 'cat' ? 'yellow' : (deck.type === 'pirate' ? 'indigo' : (deck.type === 'wolf' ? 'blue' : 'red'));
-                    card.className = `glass-card p-5 rounded-2xl border-t-4 border-${color}-400 hover:scale-[1.02] transition-transform`;
-                    card.innerHTML = `
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="text-3xl">${deck.title.split(' ')[0]}</div>
-                            <div>
-                                <h4 class="font-bold text-lg leading-tight">${deck.title.substring(2)}</h4>
+                    grid.innerHTML += `
+                        <div class="glass-card p-5 rounded-2xl">
+                            <h4 class="font-bold text-lg mb-2">${deck.title}</h4>
+                            <div class="space-y-1 text-xs text-gray-500 mb-3">
+                                <p><strong>멤버:</strong> ${deck.members}</p>
+                                <p><strong>룬:</strong> ${deck.runes}</p>
                             </div>
+                            <p class="text-xs italic text-gray-400">"${deck.desc}"</p>
                         </div>
-                        <div class="space-y-2 text-xs bg-gray-50 dark:bg-black/20 p-3 rounded-xl mb-2">
-                            <p><strong class="text-gray-500 block">멤버</strong>${deck.members}</p>
-                            <p><strong class="text-gray-500 block">스킬</strong>${deck.skills}</p>
-                            <p><strong class="text-${color}-500 block">메인룬</strong>${deck.runes}</p>
-                        </div>
-                        <p class="text-xs text-gray-500 italic">"${deck.desc}"</p>
                     `;
-                    grid.appendChild(card);
                 });
                 wrap.appendChild(grid);
-                container.appendChild(wrap);
+                deckContainer.appendChild(wrap);
             });
-        }
 
-        function renderNocturneTable() {
-            const tbody = document.getElementById('nocturne-list');
-            if(!tbody || !window.nocturneData) return;
-            window.nocturneData.forEach(item => {
-                let star = item.star3 ? '★★★' : (item.star2 ? '★★' : (item.s ? '★' : ''));
-                let color = item.star3 ? 'red' : (item.star2 ? 'orange' : 'yellow');
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-100 dark:hover:bg-gray-700 transition';
-                tr.innerHTML = `
-                    <td class="py-4 px-3 border-b border-gray-100 dark:border-gray-700 font-mono text-gray-400 font-bold text-xs">Lv.${item.lv}</td>
-                    <td class="py-4 px-2 text-left border-b border-gray-100 dark:border-gray-700 text-sm">${item.r}</td>
-                    <td class="py-4 px-2 border-b border-gray-100 dark:border-gray-700 text-right"><span class="text-${color}-500 font-bold text-lg">${star}</span></td>
+            // VIP 렌더링
+            const vipBody = document.getElementById('vip-table-body');
+            GAME_DATA.vipBenefits.forEach(v => {
+                vipBody.innerHTML += `
+                    <tr class="${v.highlight ? 'bg-yellow-50 dark:bg-yellow-900/10' : ''}">
+                        <td class="px-3 py-3 font-bold">${v.grade}</td>
+                        <td class="px-3 py-3 text-gray-500">${v.total}원</td>
+                        <td class="px-3 py-3 text-xs leading-relaxed">${v.benefits}</td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
             });
+
+            // 녹턴 렌더링
+            const nocturneBody = document.getElementById('nocturne-list');
+            GAME_DATA.nocturneRewards.forEach(n => {
+                nocturneBody.innerHTML += `
+                    <tr>
+                        <td class="py-3 px-3 font-mono text-brand-500">Lv.${n.lv}</td>
+                        <td class="py-3 px-3 text-sm">${n.r}</td>
+                    </tr>
+                `;
+            });
+
+            // 일정/미션 렌더링
+            const syncContainer = document.getElementById('synthesis-container');
+            syncContainer.innerHTML = `
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="font-bold text-lg mb-4 text-blue-600">💎 선택 룬 미션</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li>• ${GAME_DATA.synthesisMissions.specialRunes.rare}</li>
+                        <li>• ${GAME_DATA.synthesisMissions.specialRunes.hero}</li>
+                        <li>• ${GAME_DATA.synthesisMissions.specialRunes.legend}</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="font-bold text-lg mb-4 text-green-600">🔄 일반 합성 미션</h3>
+                    <ul class="space-y-2 text-sm">
+                        ${GAME_DATA.synthesisMissions.generalRunes.map(r => `<li>• ${r}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+
+            // 시스템/트로피 렌더링
+            const sysContainer = document.getElementById('systems-container');
+            sysContainer.innerHTML = `
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="font-bold text-lg mb-4">🏆 히든 트로피</h3>
+                    <ul class="space-y-2 text-xs">
+                        ${GAME_DATA.hiddenTrophies.map(t => `<li>- ${t}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="glass-card p-6 rounded-3xl bg-brand-500 text-white">
+                    <h3 class="font-bold text-lg mb-2">💡 팁</h3>
+                    <p class="text-xs leading-relaxed opacity-90">각성 수치는 13성부터 급격히 상승합니다. 메인 딜러 위주로 각성석을 집중 투자하세요!</p>
+                </div>
+            `;
         }
 
         function toggleTheme() {
@@ -727,17 +677,13 @@
             localStorage.theme = isDark ? 'dark' : 'light';
         }
 
-        // --- Init ---
         document.getElementById('pc-theme-toggle').onclick = toggleTheme;
         document.getElementById('mobile-theme-toggle').onclick = toggleTheme;
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         }
 
-        window.onload = () => {
-            renderDecks();
-            renderNocturneTable();
-        }
+        window.onload = renderAll;
     </script>
 </body>
 </html>
