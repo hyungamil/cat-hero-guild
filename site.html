@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>캣히어로 : 라임 길드 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- ✅ 외부 데이터 파일 (깃허브에서 로드) -->
+    <script src="data/schedule.js"></script>
+    <script src="data/decks.js"></script>
+    <script src="data/growth.js"></script>
+    <script src="data/systems.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                        display: ['Black Han Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ── 스크롤바 ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ── 배경 패턴 ── */
+        body {
+            background-color: #f1f5f9;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .dark body, body.dark-body {
+            background-color: #0f172a;
+            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        html.dark {
+            background-color: #0f172a;
+            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* ── 글래스 카드 ── */
+        .glass { background: rgba(255,255,255,.88); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.7); }
+        .dark .glass { background: rgba(30,41,59,.88); border: 1px solid rgba(255,255,255,.08); }
+
+        /* ── 애니메이션 ── */
+        @keyframes slideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        .anim { animation: slideUp .3s cubic-bezier(.16,1,.3,1) both; }
+        @keyframes pulse-slow { 0%,100% { opacity:1; } 50% { opacity:.6; } }
+        .pulse-slow { animation: pulse-slow 2s ease-in-out infinite; }
+
+        /* ── 사이드바 활성 ── */
+        .sb-active { background: rgba(34,197,94,.12); color: #16a34a; border-right: 3px solid #22c55e; font-weight: 700; }
+        .dark .sb-active { background: rgba(74,222,128,.1); color: #4ade80; border-right-color: #4ade80; }
+
+        /* ── 토스트 ── */
+        #toast {
+            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 999px;
+            font-size: 14px; font-weight: 600; z-index: 9999; white-space: nowrap;
+            opacity: 0; pointer-events: none; transition: all .3s; box-shadow: 0 4px 20px rgba(0,0,0,.3);
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ── 오버레이 ── */
+        #login-overlay { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity .5s; }
+        #payment-modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 9998; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .3s; }
+        #payment-modal.show { opacity: 1; pointer-events: auto; }
+        #payment-modal.show .modal-box { transform: scale(1); }
+        .modal-box { transform: scale(.9); transition: transform .3s cubic-bezier(.16,1,.3,1); }
+
+        /* ── 별 강조 ── */
+        .star3 { animation: pulse-slow 2s infinite; }
+
+        /* ── word-break ── */
+        .wb { word-break: keep-all; }
+
+        /* ── 평점 바 ── */
+        .score-bar { display: flex; gap: 2px; }
+        .score-bar span { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+    </style>
+</head>
+
+<body class="min-h-screen text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
+
+<!-- ══════════════════════════════════
+     🔒 로그인 오버레이
+══════════════════════════════════ -->
+<div id="login-overlay">
+    <div class="w-full max-w-sm mx-4 bg-gray-900 rounded-3xl p-8 border border-gray-700 shadow-2xl text-center relative overflow-hidden">
+        <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-green-500 to-teal-500"></div>
+        <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-green-900/40 border border-green-500/30 flex items-center justify-center text-green-400 text-3xl">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h2 class="text-xl font-display text-white mb-1">라임 길드원 전용</h2>
+        <p class="text-gray-400 text-sm mb-6">길드원만 입장할 수 있는 공간입니다.</p>
+        <input id="pw-input" type="password" placeholder="암호를 입력하세요"
+            class="w-full bg-gray-800 border border-gray-600 focus:border-green-500 focus:ring-1 focus:ring-green-500 rounded-xl py-3 px-4 text-white text-center mb-3 outline-none transition placeholder-gray-600"
+            onkeydown="if(event.key==='Enter') doLogin()">
+        <button onclick="doLogin()"
+            class="w-full py-3 rounded-xl bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-500 hover:to-teal-500 text-white font-bold transition active:scale-95">
+            <i class="fas fa-key mr-2"></i>입장하기
+        </button>
+        <p id="pw-msg" class="text-red-400 text-xs mt-3 h-4"></p>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════
+     💎 과금 모달
+══════════════════════════════════ -->
+<div id="payment-modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-box w-full max-w-md mx-4 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="bg-gradient-to-r from-amber-400 to-orange-500 p-5 flex items-center justify-between">
+            <div class="flex items-center gap-3 text-white">
+                <i class="fas fa-coins text-2xl"></i>
+                <div>
+                    <h3 class="font-display text-xl">과금 효율 추천</h3>
+                    <p class="text-amber-100 text-xs">지갑을 지키는 현명한 순서</p>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="text-white/70 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="payment-list" class="p-5 space-y-3 max-h-[60vh] overflow-y-auto"></div>
+        <div class="px-5 pb-5">
+            <button onclick="closeModal()" class="w-full py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl font-bold transition">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- 플로팅 버튼 -->
+<button onclick="openModal()"
+    class="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-50 w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white text-xl shadow-lg border-2 border-white/30 hover:scale-110 transition-transform pulse-slow"
+    title="과금 추천">
+    <i class="fas fa-gem"></i>
+</button>
+
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════
+     🖥️ 사이드바 (PC)
+══════════════════════════════════ -->
+<aside id="sidebar"
+    class="hidden md:flex fixed top-0 left-0 h-full w-64 glass flex-col z-50 border-r border-gray-200 dark:border-gray-700/50 shadow-xl">
+    <!-- 로고 -->
+    <div class="p-5 flex items-center gap-3 border-b border-gray-200 dark:border-gray-700/50 cursor-pointer" onclick="go('home')">
+        <div class="w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center text-white shadow overflow-hidden relative">
+            <img src="Clipped_image_20240831_193214.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover absolute inset-0">
+            <i class="fas fa-cat text-lg relative z-10"></i>
+        </div>
+        <div>
+            <p class="font-display text-lg leading-none">CAT HERO</p>
+            <p class="text-[10px] text-gray-400 font-bold tracking-widest mt-0.5">LIME GUILD</p>
+        </div>
+    </div>
+    <!-- 메뉴 -->
+    <nav class="flex-1 p-3 space-y-1 overflow-y-auto scrollbar-hide">
+        <button onclick="go('home')"       class="sb-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition flex items-center gap-3 text-gray-600 dark:text-gray-300 sb-active" data-page="home"><i class="fas fa-home w-5 text-center"></i>홈</button>
+        <button onclick="go('schedule')"   class="sb-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-page="schedule"><i class="fas fa-calendar-alt w-5 text-center"></i>일정 &amp; 미션</button>
+        <button onclick="go('growth')"     class="sb-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-page="growth"><i class="fas fa-chart-line w-5 text-center"></i>성장 &amp; VIP</button>
+        <button onclick="go('systems')"    class="sb-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-page="systems"><i class="fas fa-cogs w-5 text-center"></i>시스템 공략</button>
+        <button onclick="go('guide')"      class="sb-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-page="guide"><i class="fas fa-book-open w-5 text-center"></i>상세 공략</button>
+        <button onclick="go('deck')"       class="sb-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-page="deck"><i class="fas fa-layer-group w-5 text-center"></i>덱 도감</button>
+        <div class="border-t border-gray-200 dark:border-gray-700/50 my-2"></div>
+        <button onclick="go('calculator')" class="sb-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-page="calculator"><i class="fas fa-calculator w-5 text-center"></i>격추 계산기</button>
+        <button onclick="go('store')"      class="sb-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition flex items-center gap-3 text-gray-600 dark:text-gray-300" data-page="store"><i class="fas fa-shopping-bag w-5 text-center"></i>문의 &amp; 스토어</button>
+    </nav>
+    <!-- 테마 버튼 -->
+    <div class="p-3 border-t border-gray-200 dark:border-gray-700/50">
+        <button onclick="toggleTheme()" class="w-full py-2.5 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-sm font-bold transition flex items-center justify-center gap-2">
+            <i id="theme-icon-pc" class="fas fa-moon"></i> <span id="theme-label-pc">다크 모드</span>
+        </button>
+    </div>
+</aside>
+
+<!-- ══════════════════════════════════
+     📱 모바일 헤더
+══════════════════════════════════ -->
+<header class="md:hidden fixed top-0 inset-x-0 h-14 glass border-b border-gray-200 dark:border-gray-700/50 z-50 flex items-center justify-between px-4 shadow-sm">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="go('home')">
+        <div class="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center text-white overflow-hidden relative">
+            <img src="Clipped_image_20240831_193214.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover absolute inset-0">
+            <i class="fas fa-cat text-sm relative z-10"></i>
+        </div>
+        <span class="font-display text-base">CAT HERO</span>
+    </div>
+    <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center">
+        <i id="theme-icon-mb" class="fas fa-moon text-sm"></i>
+    </button>
+</header>
+
+<!-- ══════════════════════════════════
+     📄 메인 콘텐츠
+══════════════════════════════════ -->
+<main class="md:pl-64 pt-14 md:pt-0 pb-24 md:pb-8 min-h-screen">
+    <div class="max-w-5xl mx-auto px-4 py-6 md:px-8 md:py-10">
+
+<!-- ─────────────────────
+     홈
+───────────────────── -->
+<section id="page-home" class="anim">
+    <div class="flex flex-col md:flex-row items-center gap-6 mb-10">
+        <div class="w-24 h-24 rounded-full border-4 border-white dark:border-gray-700 shadow-xl overflow-hidden bg-yellow-100 relative flex-shrink-0">
+            <img src="Clipped_image_20240831_193214.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover">
+        </div>
+        <div class="text-center md:text-left">
+            <h1 class="text-3xl md:text-4xl font-display mb-2 wb">캣히어로 완벽 공략집 <span class="text-green-500">🐱</span></h1>
+            <div class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-full">
+                <i class="fas fa-pen-nib text-green-500 text-xs"></i>
+                <span>Created by <strong class="text-green-600 dark:text-green-400">늑대벼리</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <button onclick="go('schedule')"   class="home-card glass rounded-2xl p-5 text-center hover:scale-[1.03] transition-transform border-t-4 border-blue-500 shadow-sm">
+            <div class="text-3xl mb-2">📅</div><p class="font-bold wb">일정 &amp; 미션</p><p class="text-xs text-gray-400 mt-1">뽑기 · 합성</p>
+        </button>
+        <button onclick="go('growth')"     class="home-card glass rounded-2xl p-5 text-center hover:scale-[1.03] transition-transform border-t-4 border-yellow-500 shadow-sm">
+            <div class="text-3xl mb-2">👑</div><p class="font-bold wb">성장 &amp; VIP</p><p class="text-xs text-gray-400 mt-1">VIP · 녹턴</p>
+        </button>
+        <button onclick="go('systems')"    class="home-card glass rounded-2xl p-5 text-center hover:scale-[1.03] transition-transform border-t-4 border-slate-500 shadow-sm">
+            <div class="text-3xl mb-2">⚙️</div><p class="font-bold wb">시스템 공략</p><p class="text-xs text-gray-400 mt-1">마을 · 도탑 · 메달</p>
+        </button>
+        <button onclick="go('guide')"      class="home-card glass rounded-2xl p-5 text-center hover:scale-[1.03] transition-transform border-t-4 border-red-500 shadow-sm">
+            <div class="text-3xl mb-2">📖</div><p class="font-bold wb">상세 공략</p><p class="text-xs text-gray-400 mt-1">룬 · 탈것 · 각성</p>
+        </button>
+        <button onclick="go('deck')"       class="home-card glass rounded-2xl p-5 text-center hover:scale-[1.03] transition-transform border-t-4 border-green-500 shadow-sm">
+            <div class="text-3xl mb-2">🃏</div><p class="font-bold wb">덱 도감</p><p class="text-xs text-gray-400 mt-1">1~3신화 덱</p>
+        </button>
+        <button onclick="go('calculator')" class="home-card glass rounded-2xl p-5 text-center hover:scale-[1.03] transition-transform border-t-4 border-indigo-500 shadow-sm">
+            <div class="text-3xl mb-2">🧮</div><p class="font-bold wb">격추 계산기</p><p class="text-xs text-gray-400 mt-1">점수 자동 계산</p>
+        </button>
+        <button onclick="go('store')"      class="home-card glass rounded-2xl p-5 text-center hover:scale-[1.03] transition-transform border-t-4 border-pink-500 shadow-sm">
+            <div class="text-3xl mb-2">🛒</div><p class="font-bold wb">문의 &amp; 스토어</p><p class="text-xs text-gray-400 mt-1">웹스토어 · 문의</p>
+        </button>
+        <button onclick="openModal()"      class="home-card glass rounded-2xl p-5 text-center hover:scale-[1.03] transition-transform border-t-4 border-amber-500 shadow-sm">
+            <div class="text-3xl mb-2">💎</div><p class="font-bold wb">과금 추천</p><p class="text-xs text-gray-400 mt-1">효율 순서 안내</p>
+        </button>
+    </div>
+</section>
+
+<!-- ─────────────────────
+     일정 & 미션
+───────────────────── -->
+<section id="page-schedule" class="hidden anim">
+    <h2 class="page-title">📅 일정 &amp; 미션</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- 뽑기 순서 -->
+        <div class="glass rounded-2xl p-6 shadow-sm border-t-4 border-blue-500">
+            <h3 class="font-bold text-lg mb-5 text-blue-600 dark:text-blue-400 flex items-center gap-2"><i class="fas fa-sync-alt"></i>주간 뽑기 순서</h3>
+
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">신화 (주별)</p>
+            <div id="myth-schedule" class="space-y-2 mb-6 text-sm"></div>
+
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 border-t border-gray-200 dark:border-gray-700 pt-4">전설 (주별 순환)</p>
+            <div id="legend-schedule" class="space-y-2 text-sm"></div>
+        </div>
+
+        <!-- 합성 미션 -->
+        <div class="glass rounded-2xl p-6 shadow-sm border-t-4 border-green-500">
+            <h3 class="font-bold text-lg mb-5 text-green-600 dark:text-green-400 flex items-center gap-2"><i class="fas fa-check-circle"></i>합성 이벤트 미션</h3>
+            <div id="fusion-missions" class="space-y-3 max-h-[560px] overflow-y-auto pr-1"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ─────────────────────
+     성장 & VIP
+───────────────────── -->
+<section id="page-growth" class="hidden anim">
+    <h2 class="page-title">👑 성장 &amp; VIP</h2>
+
+    <!-- VIP 표 -->
+    <div class="glass rounded-2xl shadow-sm mb-6 overflow-hidden">
+        <div class="p-5 border-b border-gray-200 dark:border-gray-700/50">
+            <h3 class="font-bold text-lg">VIP 등급별 혜택</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50 dark:bg-white/5 text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    <tr>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">등급</th>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">누적 (원)</th>
+                        <th class="px-4 py-3 text-left">주요 혜택</th>
+                    </tr>
+                </thead>
+                <tbody id="vip-table" class="divide-y divide-gray-100 dark:divide-gray-700/50"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 녹턴 보상 -->
+    <div class="glass rounded-2xl shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
+            <h3 class="font-bold text-lg">🌙 녹턴 레벨 보상</h3>
+            <div class="flex gap-3 text-xs">
+                <span class="flex items-center gap-1"><span class="text-red-500 font-bold">★★★</span> 핵심</span>
+                <span class="flex items-center gap-1"><span class="text-orange-500 font-bold">★★</span> 중요</span>
+                <span class="flex items-center gap-1"><span class="text-yellow-500">★</span> 유용</span>
+            </div>
+        </div>
+        <div class="max-h-96 overflow-y-auto">
+            <table class="w-full text-sm">
+                <tbody id="nocturne-table" class="divide-y divide-gray-100 dark:divide-gray-700/50"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ─────────────────────
+     시스템 공략
+───────────────────── -->
+<section id="page-systems" class="hidden anim">
+    <h2 class="page-title">⚙️ 시스템 공략</h2>
+
+    <!-- 빠른 이동 -->
+    <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-3 mb-6">
+        <button onclick="jumpTo('guildwar')"  class="flex-shrink-0 bg-red-100    dark:bg-red-900/20  text-red-700    dark:text-red-400    px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-95 transition">길드전</button>
+        <button onclick="jumpTo('village')"   class="flex-shrink-0 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-95 transition">마을</button>
+        <button onclick="jumpTo('dimension')" class="flex-shrink-0 bg-purple-100  dark:bg-purple-900/20 text-purple-700  dark:text-purple-400  px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-95 transition">차원</button>
+        <button onclick="jumpTo('tower')"     class="flex-shrink-0 bg-orange-100  dark:bg-orange-900/20 text-orange-700  dark:text-orange-400  px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-95 transition">도전의 탑</button>
+        <button onclick="jumpTo('hiddenroom')" class="flex-shrink-0 bg-gray-200   dark:bg-gray-700     text-gray-700    dark:text-gray-300    px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-95 transition">숨겨진 방</button>
+        <button onclick="jumpTo('medal')"     class="flex-shrink-0 bg-yellow-100  dark:bg-yellow-900/20 text-yellow-700  dark:text-yellow-400  px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-95 transition">메달</button>
+        <button onclick="jumpTo('academy')"   class="flex-shrink-0 bg-blue-100    dark:bg-blue-900/20  text-blue-700    dark:text-blue-400    px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-95 transition">마법 아카데미</button>
+        <button onclick="jumpTo('trophy')"    class="flex-shrink-0 bg-amber-100   dark:bg-amber-900/20  text-amber-700  dark:text-amber-400   px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-95 transition">히든 트로피</button>
+    </div>
+
+    <div class="space-y-6">
+
+        <!-- 길드전 -->
+        <div id="guildwar" class="glass rounded-2xl p-6 shadow-sm border-l-4 border-red-500 scroll-mt-20">
+            <h3 class="font-bold text-lg mb-4 text-red-600 dark:text-red-400 flex items-center gap-2"><i class="fas fa-fist-raised"></i>길드전 상금 분석</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 wb">새롭게 추가된 길드전 콘텐츠입니다. 아래는 예시 서버 기준 보상 분석입니다.</p>
+            <div class="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-100 dark:border-red-800/30 text-sm space-y-1.5">
+                <p class="font-bold text-red-700 dark:text-red-300 mb-2">💰 예시 서버 (누적 219,251 블다 기준)</p>
+                <p>• 메인 성 점령 (40%): <strong>87,700 블다</strong></p>
+                <p>• 일반 성 점령 (10%): <strong>21,925 블다</strong></p>
+                <p>• 일반 성 몬스터 1% 딜: <strong>65 블다</strong></p>
+                <p>• 메인 성 몬스터 1% 딜: <strong>175 블다</strong></p>
+            </div>
+            <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-xs text-blue-800 dark:text-blue-200 space-y-1">
+                <p class="font-bold">💡 핵심 포인트</p>
+                <p>• 점령 여부와 무관하게 <strong>몬스터 피해만으로도 블다 획득</strong></p>
+                <p>• 일반 성 10% 딜 = 650 블다 / 3번만 공격해도 600+ 블다</p>
+                <p>• 서버 이전 시 <strong>누적 상금이 높은 서버</strong>가 유리</p>
+            </div>
+        </div>
+
+        <!-- 고양이 마을 -->
+        <div id="village" class="glass rounded-2xl p-6 shadow-sm border-l-4 border-emerald-500 scroll-mt-20">
+            <h3 class="font-bold text-lg mb-4 text-emerald-600 dark:text-emerald-400 flex items-center gap-2"><i class="fas fa-home"></i>고양이 마을</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 wb">고양이 상자를 해금해 보석과 망치를 획득하세요. 망치로 회관과 동상을 업그레이드합니다.</p>
+            <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-4 border border-emerald-100 dark:border-emerald-800/30 text-sm">
+                <p class="font-bold text-emerald-700 dark:text-emerald-300 mb-2">💎 운석 파편 1티어 옵션</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-700 dark:text-gray-300">
+                    <p>• <strong>피해의 파편:</strong> 모든 피해량 증가</p>
+                    <p>• <strong>보호의 파편:</strong> 최대 체력 증폭/증가</p>
+                    <p>• <strong>특화의 파편:</strong> 덱 타입 데미지 증가</p>
+                    <p>• <strong>집중의 파편:</strong> 길드 레이드/점령전 피해 증가</p>
+                    <p>• <strong>대결의 파편:</strong> PvP 명중/회피</p>
+                    <p>• <strong>풍요의 파편:</strong> 격전지 점수 추가</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 차원 -->
+        <div id="dimension" class="glass rounded-2xl p-6 shadow-sm border-l-4 border-purple-500 scroll-mt-20">
+            <h3 class="font-bold text-lg mb-4 text-purple-600 dark:text-purple-400 flex items-center gap-2"><i class="fas fa-cube"></i>차원의 공간</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 wb">격전지 장비로 능력치를 올립니다. 5단계 달성 시 열리는 중요 효과 목록입니다.</p>
+            <div class="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-100 dark:border-purple-800/30 text-sm space-y-1.5">
+                <p class="font-bold text-purple-700 dark:text-purple-300 mb-1">⚡ 주요 장비 5단계 효과</p>
+                <p>• <strong>고급 망원경:</strong> 길드 열쇠 획득 +1</p>
+                <p>• <strong>단단한 투구 / 코크 L:</strong> 서브 룬 칸 +1</p>
+                <p>• <strong>용의 알 껍질:</strong> 메인 룬 칸 +1</p>
+                <p>• <strong>늑대 / 음식 정령석:</strong> 마력 +1</p>
+            </div>
+        </div>
+
+        <!-- 도전의 탑 -->
+        <div id="tower" class="glass rounded-2xl p-6 shadow-sm border-l-4 border-orange-500 scroll-mt-20">
+            <h3 class="font-bold text-lg mb-4 text-orange-600 dark:text-orange-400 flex items-center gap-2"><i class="fas fa-dungeon"></i>도전의 탑 공략</h3>
+            <div class="space-y-4 text-sm text-gray-700 dark:text-gray-300">
+                <p class="text-xs bg-gray-100 dark:bg-white/5 p-3 rounded-xl">💡 옵션은 중첩될수록 효과가 커집니다 (곱연산). 단, 발동확률/추가시전/회복량 등은 합연산.</p>
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-100 dark:border-blue-800/30">
+                    <p class="font-bold text-blue-700 dark:text-blue-300 mb-3">🐺 늑대 덱 능력 우선순위</p>
+                    <ol class="space-y-1 text-xs list-decimal list-inside">
+                        <li><strong class="text-green-600">1순위:</strong> 동료 레벨, 스킬 쿨타임 감소</li>
+                        <li><strong class="text-blue-600">2순위:</strong> 늑대 타입 최종 피해량 증가, 전설 스킬 데미지 증가</li>
+                        <li><strong class="text-gray-600">3순위:</strong> 야성본능 확률</li>
+                        <li><strong class="text-gray-500">4순위:</strong> 부활</li>
+                    </ol>
+                    <p class="text-xs mt-3 text-gray-500">• 동료 레벨: 최대 250까지 효율적 / 스킬 쿨타임: 최대 50% 목표 / 모바일 렉 방지 위해 PC 플레이 권장</p>
+                    <div class="mt-3 p-2 bg-white/50 dark:bg-white/5 rounded-lg text-xs">
+                        <strong>추천 스킬:</strong> 할퀴기, 달분, 사개, 야본, 하울, 보름달
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs text-gray-400">
+                    <div class="p-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600">🐱 고양이<br><span class="text-[10px]">업데이트 예정</span></div>
+                    <div class="p-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600">🏴‍☠️ 해적<br><span class="text-[10px]">업데이트 예정</span></div>
+                    <div class="p-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600">🍔 음식<br><span class="text-[10px]">업데이트 예정</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 숨겨진 방 -->
+        <div id="hiddenroom" class="glass rounded-2xl p-6 shadow-sm border-l-4 border-gray-500 scroll-mt-20">
+            <h3 class="font-bold text-lg mb-4 text-gray-600 dark:text-gray-400 flex items-center gap-2"><i class="fas fa-door-open"></i>숨겨진 방 (방울)</h3>
+            <p class="text-xs bg-gray-100 dark:bg-white/5 p-2 rounded-lg mb-4">조건: 치명타 확률 130% 확보 기준 (미달 시 치확 1순위)</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-gray-700 dark:text-gray-300">
+                <div class="bg-gray-50 dark:bg-white/5 p-3 rounded-xl"><strong class="block mb-1">🌑 그림자</strong>1. 치명타 확률<br>2. 생선 제작 레벨<br>3. 치피 증폭</div>
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl"><strong class="block mb-1 text-blue-600 dark:text-blue-300">🐺 늑대 / 🍖 음식</strong>1. 생선 제작 레벨<br>2. 치피 증폭</div>
+                <div class="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-xl"><strong class="block mb-1 text-indigo-600 dark:text-indigo-300">🏴‍☠️ 해적 / ☁️ 구름</strong>1. 생선 제작 레벨<br>2. 치뎀 증폭<br>3. 치명타 확률</div>
+            </div>
+        </div>
+
+        <!-- 메달 -->
+        <div id="medal" class="glass rounded-2xl p-6 shadow-sm border-l-4 border-yellow-500 scroll-mt-20">
+            <h3 class="font-bold text-lg mb-4 text-yellow-600 dark:text-yellow-400 flex items-center gap-2"><i class="fas fa-medal"></i>메달 강화</h3>
+            <div class="space-y-2 text-sm text-gray-700 dark:text-gray-300 mb-4">
+                <p>• <strong class="text-red-500">힘의 메달:</strong> PvP 방어력 관통 (추가 데미지)</p>
+                <p>• <strong class="text-blue-500">수호의 메달:</strong> PvP 방어력 (피해 감소)</p>
+                <p>• <strong class="text-green-500">투지의 메달:</strong> 격전지 점수 증가 (격추용)</p>
+                <p>• <strong class="text-gray-400">영광의 메달:</strong> 길드전 점수 (비추천)</p>
+            </div>
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-xl text-sm font-bold text-center border border-yellow-200 dark:border-yellow-800/30">
+                PvP 유저 👉 힘 + 수호 &nbsp;|&nbsp; 격추 유저 👉 투지
+            </div>
+        </div>
+
+        <!-- 마법 아카데미 (JS 렌더) -->
+        <div id="academy" class="glass rounded-2xl p-6 shadow-sm border-l-4 border-blue-400 scroll-mt-20">
+            <h3 class="font-bold text-lg mb-5 text-blue-600 dark:text-blue-400 flex items-center gap-2"><i class="fas fa-magic"></i>마법 아카데미 보상</h3>
+            <div id="academy-content" class="space-y-6"></div>
+        </div>
+
+        <!-- 히든 트로피 (JS 렌더) -->
+        <div id="trophy" class="glass rounded-2xl p-6 shadow-sm border-l-4 border-amber-400 scroll-mt-20">
+            <h3 class="font-bold text-lg mb-4 text-amber-500 flex items-center gap-2"><i class="fas fa-trophy"></i>히든 트로피</h3>
+            <div class="mb-4 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl text-xs text-amber-700 dark:text-amber-300 font-bold text-center border border-amber-200 dark:border-amber-800/30">
+                ⚠️ 내용이 정확하지 않을 수 있습니다.
+            </div>
+            <div id="trophy-content" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ─────────────────────
+     상세 공략
+───────────────────── -->
+<section id="page-guide" class="hidden anim">
+    <h2 class="page-title">📖 상세 공략</h2>
+
+    <div class="space-y-6">
+
+        <!-- 데미지 공식 -->
+        <div class="glass rounded-2xl p-6 shadow-sm bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
+            <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-calculator"></i>데미지 공식</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div class="bg-white/10 rounded-xl p-4">
+                    <p class="font-bold text-green-300 mb-2">✅ 곱연산 (효율 좋음)</p>
+                    <ul class="space-y-1 text-xs list-disc list-inside">
+                        <li>스킬 데미지 증폭 × 증가</li>
+                        <li>스킬 계수 증가 × 증폭</li>
+                        <li>치명타 피해 증폭 × 증가</li>
+                        <li>피해감소 (90% + 50% = 95%)</li>
+                    </ul>
+                </div>
+                <div class="bg-white/10 rounded-xl p-4">
+                    <p class="font-bold text-red-300 mb-2">❌ 합연산 (효율 낮음)</p>
+                    <ul class="space-y-1 text-xs list-disc list-inside">
+                        <li>스킬 계수끼리, 증폭끼리</li>
+                        <li>각성 스킬(상태이상 추가피해)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 각성 수치 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass rounded-2xl overflow-hidden shadow-sm border-t-4 border-red-500">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700/50">
+                    <h3 class="font-bold text-red-600 dark:text-red-400">📘 신화 각성 수치</h3>
+                </div>
+                <div class="max-h-80 overflow-y-auto">
+                    <table class="w-full text-xs"><tbody id="myth-awakening"></tbody></table>
+                </div>
+            </div>
+            <div class="glass rounded-2xl overflow-hidden shadow-sm border-t-4 border-orange-400">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700/50">
+                    <h3 class="font-bold text-orange-600 dark:text-orange-400">📙 전설 각성 수치</h3>
+                </div>
+                <div class="max-h-80 overflow-y-auto">
+                    <table class="w-full text-xs"><tbody id="legend-awakening"></tbody></table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 공통 각성 -->
+        <div class="glass rounded-2xl p-6 shadow-sm border-t-4 border-green-500">
+            <h3 class="font-bold text-lg mb-4 text-green-600 dark:text-green-400">📗 공통 각성 단계 수치</h3>
+            <div id="common-awakening" class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs text-center font-bold"></div>
+        </div>
+
+        <!-- 연구 & 탈것 -->
+        <div class="glass rounded-2xl p-6 shadow-sm border-l-4 border-yellow-500">
+            <h3 class="font-bold text-lg mb-4 text-yellow-600 dark:text-yellow-400 flex items-center gap-2"><i class="fas fa-flask"></i>연구 순위</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-700 dark:text-gray-300">
+                <div>
+                    <p class="font-bold text-indigo-600 dark:text-indigo-400 mb-2">🧪 일반 연구</p>
+                    <ol class="list-decimal list-inside space-y-1 text-xs">
+                        <li>마력</li><li>연구 시간 감소</li><li>생선 제작 레벨</li><li>룬 효과 증폭</li><li>방치 보상 증가</li>
+                    </ol>
+                </div>
+                <div>
+                    <p class="font-bold text-yellow-600 dark:text-yellow-400 mb-2">🏆 황금 연구</p>
+                    <ol class="list-decimal list-inside space-y-1 text-xs">
+                        <li>PvP 회피/명중</li><li>격전지 추가 점수</li><li>고급 연구 슬롯 증가</li>
+                    </ol>
+                </div>
+                <div>
+                    <p class="font-bold text-purple-600 dark:text-purple-400 mb-2">🔮 고급 연구</p>
+                    <p class="text-xs">본인 덱 타입에 맞게 선택</p>
+                    <div class="mt-3 border-t border-gray-200 dark:border-gray-700 pt-3">
+                        <p class="font-bold text-green-600 dark:text-green-400 mb-1">🐢 탈것 추천</p>
+                        <p class="text-xs">영웅↑: 나무 거북, 졸린 보라버섯<br>신화: 열매나무, 근엄한 국왕</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 다이아 -->
+        <div class="glass rounded-2xl p-6 shadow-sm border-l-4 border-cyan-500">
+            <h3 class="font-bold text-lg mb-4 text-cyan-600 dark:text-cyan-400 flex items-center gap-2"><i class="fas fa-gem"></i>다이아몬드 사용처</h3>
+            <div class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                <div class="bg-cyan-50 dark:bg-cyan-900/20 p-3 rounded-xl text-xs">
+                    <p class="font-bold text-cyan-700 dark:text-cyan-300 mb-2">💎 종류별 안내</p>
+                    <p>• <strong>블랙:</strong> 거래소/격전지 획득 → 유저 거래 (VIP 1 이상 필요)</p>
+                    <p>• <strong>레드:</strong> 차원/리그 획득 → 트로피/탈것 뽑기 (1회 300)</p>
+                    <p>• <strong>블루:</strong> 일퀘/출석 획득 → 기본 재화</p>
+                </div>
+                <p><strong class="text-blue-600 dark:text-blue-400">A. 구름상점 외형 구매 (필수)</strong> — 보유 효과이므로 모두 구매 권장</p>
+                <p><strong class="text-blue-600 dark:text-blue-400">B. 동료 뽑기 6레벨 달성</strong> — 6렙부터 전설 픽업 활성화, 천장(1만회) 도달 시 추천</p>
+            </div>
+        </div>
+
+        <!-- 보조 룬 -->
+        <div class="glass rounded-2xl p-6 shadow-sm border-t-4 border-purple-500">
+            <h3 class="font-bold text-lg mb-4 text-purple-600 dark:text-purple-400 flex items-center gap-2"><i class="fas fa-gem"></i>보조 룬 티어</h3>
+            <div class="mb-4 bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-xl border border-yellow-200 dark:border-yellow-800/30 text-xs text-yellow-800 dark:text-yellow-200">
+                🐱 <strong>고양이 덱 주의:</strong> 스킬계수 증가 룬 필수! 클라우디 13성 미채용 시 [고양이 스킬 증폭] 룬은 필수입니다.
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p class="font-bold text-blue-600 dark:text-blue-400 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">🗡️ PvE 기준</p>
+                    <div class="space-y-2 text-xs">
+                        <p><span class="bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-bold mr-2">1티어</span>마력 관련 룬</p>
+                        <p><span class="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded font-bold mr-2">2티어</span>버프 룬 (해적/고양이/늑대/음식/기계)</p>
+                        <p><span class="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-bold mr-2">3티어</span>동물 강화 (조건에 따라 1티어급)</p>
+                        <p><span class="bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded font-bold mr-2">4티어</span>치명타 룬 (순수 치확 70% 이상 불필요)</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="font-bold text-red-600 dark:text-red-400 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">🛡️ PvP 기준</p>
+                    <div class="space-y-2 text-xs">
+                        <p><span class="bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-bold mr-2">1티어</span>마력 관련 룬</p>
+                        <p><span class="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded font-bold mr-2">2티어</span>회피, 명중 룬</p>
+                        <p><span class="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-bold mr-2">3티어</span>버프 룬</p>
+                        <p><span class="bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded font-bold mr-2">4티어</span>치명타 저항 룬</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ─────────────────────
+     덱 도감
+───────────────────── -->
+<section id="page-deck" class="hidden anim">
+    <h2 class="page-title">🃏 덱 도감</h2>
+
+    <!-- 필터 탭 -->
+    <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-3 mb-6">
+        <button onclick="filterDecks('all')"    class="deck-filter flex-shrink-0 active-filter px-4 py-1.5 rounded-full text-xs font-bold transition" data-filter="all">전체</button>
+        <button onclick="filterDecks('1myth')"  class="deck-filter flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 transition" data-filter="1myth">1신화</button>
+        <button onclick="filterDecks('2myth')"  class="deck-filter flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 transition" data-filter="2myth">2신화</button>
+        <button onclick="filterDecks('3myth')"  class="deck-filter flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 transition" data-filter="3myth">3신화</button>
+    </div>
+
+    <div id="deck-container" class="space-y-10"></div>
+</section>
+
+<!-- ─────────────────────
+     격추 계산기
+───────────────────── -->
+<section id="page-calculator" class="hidden anim">
+    <h2 class="page-title">🧮 격추 점수 계산기</h2>
+    <div class="max-w-sm mx-auto">
+        <div class="glass rounded-2xl shadow-sm overflow-hidden">
+            <div class="bg-indigo-600 p-6 text-white text-center">
+                <div class="text-4xl mb-2">🎯</div>
+                <h3 class="font-bold text-xl">격추 퍼센트 입력</h3>
+            </div>
+            <div class="p-6 space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">격추 퍼센트 (%)</label>
+                    <input type="number" id="calc-input" oninput="calcScore()" placeholder="예: 40"
+                        class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-600 rounded-xl py-3 px-4 text-xl text-center outline-none focus:border-indigo-500 transition">
+                </div>
+                <div class="bg-gray-900 dark:bg-black/40 rounded-xl p-5 text-center">
+                    <div id="calc-result" class="text-4xl font-bold font-display text-white">85,500 점</div>
+                </div>
+                <div class="bg-gray-50 dark:bg-white/5 rounded-xl p-4 text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                    <p>• 기본 점수 (0%): <strong>85,500점</strong></p>
+                    <p>• 1%당 증가량: <strong>300점</strong></p>
+                    <p class="pt-2 border-t border-gray-200 dark:border-gray-700 font-mono">공식: (% × 300) + 85,500</p>
+                </div>
+                <p class="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl">
+                    ⚠️ 폰 성능, 덱 구성, 서버 불안정으로 실제 점수와 차이가 생길 수 있습니다.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─────────────────────
+     문의 & 스토어
+───────────────────── -->
+<section id="page-store" class="hidden anim">
+    <h2 class="page-title">🛒 문의 &amp; 웹스토어</h2>
+    <div class="max-w-md mx-auto space-y-4">
+        <a href="https://web-store.gameduo.net/ko/gv?category" target="_blank" rel="noopener"
+            class="glass rounded-2xl p-5 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm group">
+            <div class="w-14 h-14 rounded-xl bg-pink-100 dark:bg-pink-900/30 text-pink-500 flex items-center justify-center text-2xl group-hover:bg-pink-500 group-hover:text-white transition">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div>
+                <p class="font-bold text-base">캣히어로 웹스토어</p>
+                <p class="text-xs text-gray-400">공식 웹스토어로 이동</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-gray-300"></i>
+        </a>
+        <button onclick="copyEmail()"
+            class="glass rounded-2xl p-5 w-full text-left flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm group">
+            <div class="w-14 h-14 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-500 flex items-center justify-center text-2xl group-hover:bg-gray-600 group-hover:text-white transition">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div>
+                <p class="font-bold text-base">개발사 문의</p>
+                <p class="text-xs text-gray-400">cathero@gameduo.net</p>
+                <p class="text-xs text-green-500 font-bold mt-0.5"><i class="fas fa-copy mr-1"></i>클릭하여 복사</p>
+            </div>
+        </button>
+    </div>
+</section>
+
+    </div><!-- /max-w -->
+</main>
+
+<!-- ══════════════════════════════════
+     📱 모바일 하단 네비
+══════════════════════════════════ -->
+<nav class="md:hidden fixed bottom-0 inset-x-0 glass border-t border-gray-200 dark:border-gray-700/50 z-50 flex h-16">
+    <button onclick="go('home')"       class="mb-nav flex-1 flex flex-col items-center justify-center gap-0.5 text-gray-500 dark:text-gray-400 hover:text-green-500 transition" data-page="home"><i class="fas fa-home text-lg"></i><span class="text-[9px] font-bold">홈</span></button>
+    <button onclick="go('schedule')"   class="mb-nav flex-1 flex flex-col items-center justify-center gap-0.5 text-gray-500 dark:text-gray-400 hover:text-green-500 transition" data-page="schedule"><i class="fas fa-calendar-alt text-lg"></i><span class="text-[9px] font-bold">일정</span></button>
+    <button onclick="go('deck')"       class="mb-nav flex-1 flex flex-col items-center justify-center gap-0.5 text-gray-500 dark:text-gray-400 hover:text-green-500 transition" data-page="deck"><i class="fas fa-layer-group text-lg"></i><span class="text-[9px] font-bold">덱</span></button>
+    <button onclick="go('systems')"    class="mb-nav flex-1 flex flex-col items-center justify-center gap-0.5 text-gray-500 dark:text-gray-400 hover:text-green-500 transition" data-page="systems"><i class="fas fa-cogs text-lg"></i><span class="text-[9px] font-bold">시스템</span></button>
+    <button onclick="go('guide')"      class="mb-nav flex-1 flex flex-col items-center justify-center gap-0.5 text-gray-500 dark:text-gray-400 hover:text-green-500 transition" data-page="guide"><i class="fas fa-book-open text-lg"></i><span class="text-[9px] font-bold">공략</span></button>
+</nav>
+
+<style>
+    .page-title { font-family: 'Black Han Sans', sans-serif; font-size: 1.75rem; margin-bottom: 1.5rem; }
+    .active-filter { background: #22c55e; color: #fff; }
+    .mb-nav.nav-active { color: #22c55e; }
+    .dark .mb-nav.nav-active { color: #4ade80; }
+</style>
+
+<!-- ══════════════════════════════════
+     🚀 앱 로직
+══════════════════════════════════ -->
+<script>
+// ── 로그인 ──
+function doLogin() {
+    if (document.getElementById('pw-input').value === '라임 최고') {
+        const ol = document.getElementById('login-overlay');
+        ol.style.opacity = '0';
+        setTimeout(() => ol.remove(), 500);
+        sessionStorage.setItem('auth', '1');
+    } else {
+        document.getElementById('pw-msg').textContent = '비밀번호가 맞지 않습니다.';
+        document.getElementById('pw-input').value = '';
+    }
+}
+if (sessionStorage.getItem('auth') === '1') {
+    document.getElementById('login-overlay').remove();
+}
+
+// ── 테마 ──
+function applyTheme(dark) {
+    document.documentElement.classList.toggle('dark', dark);
+    const icon = dark ? 'fa-sun' : 'fa-moon';
+    const label = dark ? '라이트 모드' : '다크 모드';
+    document.getElementById('theme-icon-pc').className = 'fas ' + icon;
+    document.getElementById('theme-icon-mb').className = 'fas ' + icon + ' text-sm';
+    const lbl = document.getElementById('theme-label-pc');
+    if (lbl) lbl.textContent = label;
+}
+function toggleTheme() {
+    const dark = !document.documentElement.classList.contains('dark');
+    localStorage.theme = dark ? 'dark' : 'light';
+    applyTheme(dark);
+}
+applyTheme(localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme:dark)').matches));
+
+// ── 네비게이션 ──
+let curPage = 'home';
+function go(page) {
+    document.querySelectorAll('[id^="page-"]').forEach(s => s.classList.add('hidden'));
+    const el = document.getElementById('page-' + page);
+    if (!el) return;
+    el.classList.remove('hidden');
+    el.classList.remove('anim'); void el.offsetWidth; el.classList.add('anim');
+    window.scrollTo(0, 0);
+    curPage = page;
+
+    // 사이드바
+    document.querySelectorAll('.sb-btn').forEach(b => b.classList.toggle('sb-active', b.dataset.page === page));
+    // 모바일 하단
+    document.querySelectorAll('.mb-nav').forEach(b => b.classList.toggle('nav-active', b.dataset.page === page));
+}
+function jumpTo(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── 유틸 ──
+function copyEmail() {
+    navigator.clipboard?.writeText('cathero@gameduo.net').catch(() => {
+        const t = document.createElement('textarea');
+        t.value = 'cathero@gameduo.net';
+        document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+    });
+    showToast('이메일 주소가 복사되었습니다!');
+}
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+function calcScore() {
+    const v = parseFloat(document.getElementById('calc-input').value);
+    document.getElementById('calc-result').textContent = isNaN(v) ? '85,500 점' : ((v * 300 + 85500).toLocaleString('ko-KR') + ' 점');
+}
+
+// ── 모달 ──
+function openModal()  { const m = document.getElementById('payment-modal'); m.classList.add('show'); }
+function closeModal() { document.getElementById('payment-modal').classList.remove('show'); }
+
+// ════════════════════════════════════════
+//  🎨 렌더 함수
+// ════════════════════════════════════════
+
+// ── 과금 모달 ──
+function renderPaymentGuide() {
+    const el = document.getElementById('payment-list');
+    if (!el) return;
+    const colorMap = {
+        red:    'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30',
+        orange: 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800/30',
+        yellow: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/30',
+        blue:   'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30',
+    };
+    const badgeMap = { red:'bg-red-500', orange:'bg-orange-500', yellow:'bg-yellow-500', blue:'bg-blue-500' };
+    el.innerHTML = systemsData.paymentGuide.map(p => {
+        const body = p.items
+            ? `<ul class="text-xs list-disc list-inside text-gray-600 dark:text-gray-300 mt-1 space-y-0.5">${p.items.map(i=>`<li>${i}</li>`).join('')}</ul>`
+            : `<p class="text-sm text-gray-600 dark:text-gray-300 mt-1">${p.desc}</p>`;
+        return `<div class="p-4 rounded-xl border ${colorMap[p.color]||colorMap.blue}">
+            <div class="flex items-center gap-2 mb-1">
+                <span class="${badgeMap[p.color]||'bg-blue-500'} text-white text-xs font-bold px-2 py-0.5 rounded">${p.priority}순위</span>
+                <strong class="text-sm">${p.title}</strong>
+            </div>${body}</div>`;
+    }).join('');
+}
+
+// ── 뽑기 일정 ──
+function renderSchedule() {
+    const { mythSchedule, legendSchedule } = scheduleData;
+
+    document.getElementById('myth-schedule').innerHTML = mythSchedule.map(r => `
+        <div class="flex items-start gap-3 py-1.5 border-b border-gray-100 dark:border-gray-700/50 last:border-0">
+            <span class="font-mono text-xs text-gray-400 w-10 flex-shrink-0 pt-0.5">${r.date}</span>
+            <span class="text-gray-700 dark:text-gray-300">${r.units.join(' → ')}</span>
+        </div>`).join('');
+
+    document.getElementById('legend-schedule').innerHTML = legendSchedule.map(r => `
+        <div class="flex items-start gap-3 py-1.5 border-b border-gray-100 dark:border-gray-700/50 last:border-0">
+            <span class="font-mono text-xs text-gray-400 w-10 flex-shrink-0 pt-0.5">${r.order}주</span>
+            <span class="text-gray-700 dark:text-gray-300">${r.units.join(' → ')}</span>
+        </div>`).join('');
+}
+
+// ── 합성 미션 ──
+function renderFusionMissions() {
+    const colorMap = {
+        green:  'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/30 text-green-700 dark:text-green-400',
+        gray:   'bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-gray-700/50 text-gray-600 dark:text-gray-400',
+        yellow: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/30 text-yellow-700 dark:text-yellow-400',
+        purple: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800/30 text-purple-700 dark:text-purple-400',
+        blue:   'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30 text-blue-700 dark:text-blue-400',
+        pink:   'bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-800/30 text-pink-700 dark:text-pink-400',
+    };
+    document.getElementById('fusion-missions').innerHTML = scheduleData.fusionMissions.map(m => {
+        const c = colorMap[m.color] || colorMap.gray;
+        return `<div class="p-3 rounded-xl border ${c}">
+            <strong class="block text-sm mb-2">${m.title}</strong>
+            <ul class="space-y-0.5 text-xs text-gray-600 dark:text-gray-300">
+                ${m.items.map(i => `<li>• ${i}</li>`).join('')}
+            </ul>
+        </div>`;
+    }).join('');
+}
+
+// ── VIP ──
+function renderVipTable() {
+    const hlMap = { red:'bg-red-50 dark:bg-red-900/10', purple:'bg-purple-50 dark:bg-purple-900/10', blue:'bg-blue-50 dark:bg-blue-900/10', pink:'bg-pink-50 dark:bg-pink-900/10', green:'bg-green-50 dark:bg-green-900/10' };
+    const grMap = { red:'text-red-600 dark:text-red-400', purple:'text-purple-500', blue:'text-blue-500', pink:'text-pink-500', green:'text-green-600' };
+    document.getElementById('vip-table').innerHTML = growthData.vipTable.map(r => `
+        <tr class="${hlMap[r.highlight] || ''}">
+            <td class="px-4 py-2.5 font-bold whitespace-nowrap ${grMap[r.highlight]||''}">${r.grade}</td>
+            <td class="px-4 py-2.5 text-gray-500 whitespace-nowrap">${r.cost}</td>
+            <td class="px-4 py-2.5 text-xs text-gray-600 dark:text-gray-300">${r.grade==='VIP'?r.benefits.replace('장비 거래소 오픈,','<strong class="text-red-600">장비 거래소 오픈</strong>,'):r.benefits}</td>
+        </tr>`).join('');
+}
+
+// ── 녹턴 ──
+function renderNocturne() {
+    document.getElementById('nocturne-table').innerHTML = growthData.nocturneRewards.map(item => {
+        let star = '', bg = '';
+        if      (item.star3) { star = '<span class="text-red-500 font-bold star3">★★★</span>'; bg = 'bg-red-50 dark:bg-red-900/20'; }
+        else if (item.star2) { star = '<span class="text-orange-500 font-bold">★★</span>'; bg = 'bg-orange-50 dark:bg-orange-900/20'; }
+        else if (item.s)     { star = '<span class="text-yellow-500">★</span>'; bg = 'bg-yellow-50 dark:bg-yellow-900/10'; }
+        return `<tr class="${bg} hover:brightness-95 transition">
+            <td class="px-4 py-3 font-mono text-gray-400 text-xs whitespace-nowrap">Lv.${item.lv}</td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${item.r}</td>
+            <td class="px-4 py-3 text-right whitespace-nowrap">${star}</td>
+        </tr>`;
+    }).join('');
+}
+
+// ── 각성 ──
+function renderAwakening() {
+    const mkRows = (data, hlCls, rateCls) => data.map(r => `
+        <tr class="${r.awakening ? hlCls : 'hover:bg-gray-50 dark:hover:bg-white/5'} transition">
+            <td class="px-3 py-2 font-bold ${r.awakening ? 'text-indigo-700 dark:text-indigo-300' : ''}">${r.stage}</td>
+            <td class="px-3 py-2 text-right">${r.value}</td>
+            <td class="px-3 py-2 text-right ${r.rate==='-' ? 'text-gray-400' : rateCls}">${r.rate}</td>
+        </tr>`).join('');
+
+    const hdr = `<thead class="bg-gray-50 dark:bg-white/5 text-xs text-gray-400 uppercase sticky top-0">
+        <tr><th class="px-3 py-2 text-left">단계</th><th class="px-3 py-2 text-right">수치</th><th class="px-3 py-2 text-right">증가율</th></tr>
+    </thead>`;
+
+    document.getElementById('myth-awakening').innerHTML = hdr + '<tbody>' + mkRows(systemsData.mythAwakening, 'bg-red-50 dark:bg-red-900/20', 'text-green-600 dark:text-green-400 font-bold') + '</tbody>';
+    document.getElementById('legend-awakening').innerHTML = hdr + '<tbody>' + mkRows(systemsData.legendAwakening, 'bg-orange-50 dark:bg-orange-900/20', 'text-orange-500 font-bold') + '</tbody>';
+
+    document.getElementById('common-awakening').innerHTML = systemsData.commonAwakening.map(s => `
+        <div class="p-2 rounded-lg border ${s.highlight ? 'bg-green-100 dark:bg-green-800/40 border-green-300 dark:border-green-700 text-green-700 dark:text-green-300' : 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30 text-gray-700 dark:text-gray-300'}">
+            <div class="font-bold">${s.stage}</div>
+            <div>${s.value}</div>
+        </div>`).join('');
+}
+
+// ── 덱 도감 ──
+let deckFilter = 'all';
+const typeStyle = {
+    cat:    { label:'고양이', color:'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300', border:'border-yellow-400' },
+    pirate: { label:'해적',   color:'bg-indigo-100 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300', border:'border-indigo-400' },
+    wolf:   { label:'늑대',   color:'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300',         border:'border-blue-400' },
+    food:   { label:'음식',   color:'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300',             border:'border-red-400' },
+};
+const tierLabel = { '1myth':'1신화 ⭐', '2myth':'2신화 ⭐⭐', '3myth':'3신화 ⭐⭐⭐' };
+const tierColor = { '1myth':'text-blue-600 dark:text-blue-400', '2myth':'text-purple-600 dark:text-purple-400', '3myth':'text-red-600 dark:text-red-400' };
+
+function scoreBar(val, max=5, color='bg-green-500') {
+    return Array.from({length:max}, (_, i) => `<span class="w-2.5 h-2.5 rounded-sm ${i<val ? color : 'bg-gray-200 dark:bg-gray-600'}"></span>`).join('');
+}
+
+function renderDeckCard(deck, tier) {
+    const ts = typeStyle[deck.type] || typeStyle.cat;
+    return `
+    <div class="glass rounded-2xl p-5 shadow-sm border-l-4 ${ts.border} hover:scale-[1.01] transition-transform deck-item" data-tier="${tier}">
+        <div class="flex items-start justify-between gap-2 mb-3">
+            <div>
+                <h4 class="font-bold text-base wb leading-snug">${deck.title}</h4>
+                <span class="${ts.color} text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block">${ts.label}</span>
+            </div>
+        </div>
+        <div class="space-y-2 text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl p-3 mb-3">
+            <p><strong class="text-gray-500 dark:text-gray-400 block mb-0.5">멤버</strong>${deck.members}</p>
+            <p><strong class="text-gray-500 dark:text-gray-400 block mb-0.5">스킬</strong>${deck.skills}</p>
+            <p><strong class="${ts.color.split(' ')[2]||'text-green-600'} block mb-0.5">메인룬</strong>${deck.runes}</p>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-center mb-3">
+            <div class="bg-gray-100 dark:bg-white/5 rounded-lg p-2">
+                <p class="text-gray-400 mb-1">PvE</p>
+                <div class="flex justify-center gap-0.5">${scoreBar(deck.score.pve, 5, 'bg-green-500')}</div>
+            </div>
+            <div class="bg-gray-100 dark:bg-white/5 rounded-lg p-2">
+                <p class="text-gray-400 mb-1">PvP</p>
+                <div class="flex justify-center gap-0.5">${scoreBar(deck.score.pvp, 5, 'bg-red-400')}</div>
+            </div>
+            <div class="bg-gray-100 dark:bg-white/5 rounded-lg p-2">
+                <p class="text-gray-400 mb-1">비용</p>
+                <div class="flex justify-center gap-0.5">${scoreBar(deck.score.cost, 5, 'bg-amber-400')}</div>
+            </div>
+        </div>
+        <p class="text-xs text-gray-400 italic">"${deck.desc}"</p>
+    </div>`;
+}
+
+function renderDecks() {
+    const container = document.getElementById('deck-container');
+    const tiers = ['1myth', '2myth', '3myth'];
+    container.innerHTML = tiers.map(tier => `
+        <div class="tier-section" data-tier="${tier}">
+            <h3 class="font-display text-2xl mb-4 ${tierColor[tier]}">${tierLabel[tier]}</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                ${(deckData[tier]||[]).map(d => renderDeckCard(d, tier)).join('')}
+            </div>
+        </div>`).join('');
+}
+
+function filterDecks(filter) {
+    deckFilter = filter;
+    document.querySelectorAll('.deck-filter').forEach(b => {
+        b.classList.toggle('active-filter', b.dataset.filter === filter);
+        b.classList.toggle('bg-gray-100', b.dataset.filter !== filter);
+        b.classList.toggle('dark:bg-white/10', b.dataset.filter !== filter);
+        b.classList.toggle('text-gray-600', b.dataset.filter !== filter);
+        b.classList.toggle('dark:text-gray-300', b.dataset.filter !== filter);
+    });
+    document.querySelectorAll('.tier-section').forEach(sec => {
+        sec.style.display = (filter === 'all' || sec.dataset.tier === filter) ? '' : 'none';
+    });
+}
+
+// ── 아카데미 ──
+function renderAcademy() {
+    const el = document.getElementById('academy-content');
+    const keys = ['그려그려', '닌자', '블럭개', '기사현자', '법사현자'];
+    const icons = { '그려그려':'🎨', '닌자':'🥷', '블럭개':'🧱', '기사현자':'⚔️', '법사현자':'🔮' };
+
+    el.innerHTML = keys.map(k => {
+        const rows = systemsData.academyRewards[k];
+        const hasFriendship = rows[0]?.intimacy !== undefined;
+        const trs = rows.map(r => {
+            const lRec = r.left.includes('✅');
+            const rRec = r.right.includes('✅');
+            const lClean = r.left.replace(' ✅','');
+            const rClean = r.right.replace(' ✅','');
+            const recCell = lRec
+                ? `<span class="text-green-600 dark:text-green-400 font-bold">[추천] ${lClean}</span> / ${rClean}`
+                : rRec
+                    ? `${lClean} / <span class="text-green-600 dark:text-green-400 font-bold">[추천] ${rClean}</span>`
+                    : `${lClean} / ${rClean}`;
+            return `<tr class="${r.special ? 'bg-yellow-50 dark:bg-yellow-900/10 font-bold' : ''} hover:bg-gray-50 dark:hover:bg-white/5 transition">
+                <td class="p-2 text-gray-700 dark:text-gray-300">${r.situation}</td>
+                <td class="p-2">${recCell}</td>
+                ${hasFriendship ? `<td class="p-2 text-center ${r.special ? 'text-red-500 font-bold' : 'text-gray-500'}">${r.intimacy}</td>` : ''}
+            </tr>`;
+        }).join('');
+        return `
+        <div>
+            <h4 class="font-bold mb-2">${icons[k]} ${k}</h4>
+            <div class="overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-700/50">
+                <table class="w-full text-xs">
+                    <thead class="bg-gray-50 dark:bg-white/5 text-gray-400 text-[10px] uppercase">
+                        <tr>
+                            <th class="p-2 text-left w-1/2">상황</th>
+                            <th class="p-2 text-left">추천 선택</th>
+                            ${hasFriendship ? '<th class="p-2 text-center whitespace-nowrap">친밀도</th>' : ''}
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700/50">${trs}</tbody>
+                </table>
+            </div>
+        </div>`;
+    }).join('') + `
+    <div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-xl border border-yellow-200 dark:border-yellow-800/30 text-xs text-yellow-800 dark:text-yellow-200">
+        <strong class="block mb-1">📌 추가 안내</strong>
+        미니게임 포기/실패해도 보상은 동일합니다.<br>
+        <span class="text-red-500 font-bold">'표식'</span>을 주는 퀘스트는 등장 확률이 낮으니 꼭 챙기세요!
+    </div>`;
+}
+
+// ── 트로피 ──
+function renderTrophies() {
+    document.getElementById('trophy-content').innerHTML = systemsData.hiddenTrophies.map(t =>
+        `<div class="bg-gray-50 dark:bg-white/5 rounded-lg p-2.5 text-xs"><strong class="text-amber-600 dark:text-amber-400">${t.name}</strong><br><span class="text-gray-500 dark:text-gray-400">${t.condition}</span></div>`
+    ).join('');
+}
+
+// ════════════════════════════════════════
+//  🚀 초기화
+// ════════════════════════════════════════
+(function init() {
+    renderPaymentGuide();
+    renderSchedule();
+    renderFusionMissions();
+    renderVipTable();
+    renderNocturne();
+    renderAwakening();
+    renderDecks();
+    renderAcademy();
+    renderTrophies();
+    go('home');
+})();
+</script>
+</body>
+</html>
