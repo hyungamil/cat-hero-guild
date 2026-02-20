@@ -12,15 +12,8 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Noto Sans KR', 'sans-serif'],
-                        display: ['Black Han Sans', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: { 50: '#f0fdf4', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a' },
-                    },
-                    animation: { 'bounce-slight': 'bounce-slight 0.5s infinite' },
-                    keyframes: { 'bounce-slight': { '0%, 100%': { transform: 'translateY(-5%)' }, '50%': { transform: 'translateY(0)' } } }
+                    fontFamily: { sans: ['Noto Sans KR', 'sans-serif'], display: ['Black Han Sans', 'sans-serif'] },
+                    colors: { brand: { 50: '#f0fdf4', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a' } }
                 }
             }
         }
@@ -32,120 +25,91 @@
         .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
         .dark .glass-card { background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); }
         .sidebar-active { background: rgba(34, 197, 94, 0.1); color: #16a34a; border-right: 3px solid #16a34a; }
-        .dark .sidebar-active { background: rgba(74, 222, 128, 0.1); color: #4ade80; border-right: 3px solid #4ade80; }
-        #login-overlay { position: fixed; inset: 0; background: #111827; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        #loader { position: fixed; inset: 0; background: white; z-index: 9998; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
+        #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
         .dark #loader { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #22c55e; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-pattern min-h-screen text-gray-800 transition-colors duration-300 dark:text-gray-100 font-sans overflow-x-hidden">
 
-    <!-- DATA LOADING OVERLAY -->
+    <!-- 로딩 화면 -->
     <div id="loader">
-        <div class="w-16 h-16 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="font-display text-xl animate-pulse">데이터를 불러오는 중...</p>
-        <p id="error-hint" class="hidden mt-4 text-red-500 text-sm text-center px-4">
-            데이터를 불러오지 못했습니다.<br>깃허브 주소가 정확한지, JSON 형식이 맞는지 확인해주세요.
-        </p>
+        <div class="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="font-display text-lg">라임 길드 데이터 동기화 중...</p>
     </div>
 
-    <!-- PASSWORD LOGIN OVERLAY -->
-    <div id="login-overlay" class="hidden">
-        <div class="glass-card p-8 rounded-3xl w-full max-w-sm text-center shadow-2xl mx-4">
-            <h2 class="text-xl font-display text-white mb-6 tracking-wide">🔒 [라임] 길드원 전용 공간</h2>
-            <input type="text" id="password-input" placeholder="암호 입력" class="w-full bg-gray-900 border border-gray-600 rounded-lg py-3 px-4 text-white text-center mb-4 outline-none focus:border-brand-500">
-            <button onclick="checkPassword()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-lg transition active:scale-95">입장하기</button>
-            <p id="login-msg" class="text-brand-400 text-xs mt-3 h-4 font-bold"></p>
+    <!-- 로그인 오버레이 -->
+    <div id="login-overlay" class="fixed inset-0 bg-gray-900 z-[9998] flex items-center justify-center p-4">
+        <div class="glass-card p-8 rounded-3xl w-full max-w-sm text-center">
+            <h2 class="text-2xl font-display text-white mb-6">🔒 길드 전용 암호</h2>
+            <input type="text" id="password-input" placeholder="암호를 입력하세요" class="w-full bg-gray-800 border border-gray-600 rounded-xl py-4 px-4 text-white text-center mb-4 outline-none focus:border-brand-500">
+            <button onclick="checkPassword()" class="w-full bg-brand-500 text-white font-bold py-4 rounded-xl hover:bg-brand-600 transition">입장하기</button>
+            <p id="login-msg" class="text-red-400 text-sm mt-4 h-4"></p>
         </div>
     </div>
 
-    <!-- PC SIDEBAR -->
+    <!-- 사이드바 (PC) -->
     <aside class="hidden md:flex fixed top-0 left-0 h-full w-64 glass-card flex-col z-50">
-        <div class="p-6 flex items-center gap-3 cursor-pointer" onclick="goHome()">
-            <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-lg"><i class="fas fa-cat text-xl"></i></div>
-            <div class="font-display text-xl">CAT HERO</div>
-        </div>
+        <div class="p-6 font-display text-2xl text-brand-600">CAT HERO</div>
         <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto scrollbar-hide">
-            <button onclick="openSection('home-screen')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3 sidebar-active" data-target="home-screen"><i class="fas fa-home w-6"></i> 홈</button>
-            <button onclick="openSection('schedule')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3" data-target="schedule"><i class="fas fa-calendar-alt w-6"></i> 일정 & 미션</button>
-            <button onclick="openSection('growth')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3" data-target="growth"><i class="fas fa-chart-line w-6"></i> 성장 & VIP</button>
-            <button onclick="openSection('deck')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3" data-target="deck"><i class="fas fa-layer-group w-6"></i> 덱 도감</button>
-            <button onclick="openSection('calculator')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3" data-target="calculator"><i class="fas fa-calculator w-6"></i> 계산기</button>
+            <button onclick="openSection('home-screen')" class="sidebar-btn w-full text-left p-4 rounded-xl flex items-center gap-3 sidebar-active" data-target="home-screen"><i class="fas fa-home w-5"></i> 홈</button>
+            <button onclick="openSection('schedule')" class="sidebar-btn w-full text-left p-4 rounded-xl flex items-center gap-3" data-target="schedule"><i class="fas fa-calendar-check w-5"></i> 일정 & 미션</button>
+            <button onclick="openSection('growth')" class="sidebar-btn w-full text-left p-4 rounded-xl flex items-center gap-3" data-target="growth"><i class="fas fa-trending-up w-5"></i> 성장 & VIP</button>
+            <button onclick="openSection('systems')" class="sidebar-btn w-full text-left p-4 rounded-xl flex items-center gap-3" data-target="systems"><i class="fas fa-gamepad w-5"></i> 시스템 & 정답</button>
+            <button onclick="openSection('deck')" class="sidebar-btn w-full text-left p-4 rounded-xl flex items-center gap-3" data-target="deck"><i class="fas fa-users w-5"></i> 덱 도감</button>
+            <button onclick="openSection('calculator')" class="sidebar-btn w-full text-left p-4 rounded-xl flex items-center gap-3" data-target="calculator"><i class="fas fa-calculator w-5"></i> 격추 계산기</button>
         </nav>
     </aside>
 
-    <!-- MOBILE HEADER -->
-    <header class="md:hidden fixed top-0 w-full z-50 glass-card h-16 flex items-center justify-between px-5">
-        <div class="flex items-center gap-3" onclick="goHome()">
-            <div class="w-9 h-9 rounded-lg bg-brand-500 flex items-center justify-center text-white"><i class="fas fa-cat"></i></div>
-            <span class="font-display text-lg">CAT HERO</span>
-        </div>
-        <button id="mobile-theme-toggle" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"><i class="fas fa-moon"></i></button>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <main class="pt-20 pb-24 md:pb-10 md:pt-10 md:pl-72 px-4 md:pr-10 w-full max-w-7xl mx-auto relative z-10 min-h-screen">
+    <!-- 메인 영역 -->
+    <main class="pt-10 md:pl-72 px-4 pb-20 max-w-7xl mx-auto">
         
-        <!-- HOME -->
-        <section id="home-screen" class="page-enter">
-            <div class="py-10 flex flex-col md:flex-row items-center gap-6">
-                <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-xl animate-bounce-slight bg-yellow-100 flex items-center justify-center">
-                    <i class="fas fa-paw text-4xl text-yellow-500"></i>
-                </div>
-                <div class="text-center md:text-left">
-                    <h1 class="text-2xl md:text-4xl font-display mb-2">환영합니다!<br><span class="text-brand-500">라임 길드 전용</span> 공략집</h1>
-                    <p class="text-gray-500 text-sm">깃허브 데이터를 실시간으로 반영합니다.</p>
-                </div>
+        <!-- 홈 -->
+        <section id="home-screen">
+            <div class="py-12 text-center md:text-left">
+                <h1 class="text-4xl md:text-5xl font-display mb-4">환영합니다!<br><span class="text-brand-500">라임 길드</span> 전용 위키</h1>
+                <p class="text-gray-500">모든 정보는 실시간으로 업데이트됩니다.</p>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-                <button onclick="openSection('schedule')" class="glass-card p-6 rounded-3xl flex flex-col items-center gap-3 border-t-4 border-blue-500"><i class="fas fa-calendar-alt text-3xl text-blue-500"></i><span class="font-bold">일정 & 미션</span></button>
-                <button onclick="openSection('growth')" class="glass-card p-6 rounded-3xl flex flex-col items-center gap-3 border-t-4 border-yellow-500"><i class="fas fa-chart-line text-3xl text-yellow-500"></i><span class="font-bold">성장 & VIP</span></button>
-                <button onclick="openSection('deck')" class="glass-card p-6 rounded-3xl flex flex-col items-center gap-3 border-t-4 border-green-500"><i class="fas fa-layer-group text-3xl text-green-500"></i><span class="font-bold">덱 도감</span></button>
-                <button onclick="openSection('calculator')" class="glass-card p-6 rounded-3xl flex flex-col items-center gap-3 border-t-4 border-indigo-500"><i class="fas fa-calculator text-3xl text-indigo-500"></i><span class="font-bold">격추 계산기</span></button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="home-menu">
+                <!-- 동적 버튼 생성 -->
             </div>
         </section>
 
-        <!-- SCHEDULE -->
+        <!-- 일정 & 미션 -->
         <section id="schedule" class="hidden">
-            <h2 class="text-3xl font-display mb-6">일정 및 미션</h2>
-            <div id="schedule-content" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+            <h2 class="text-3xl font-display mb-8"><i class="fas fa-calendar-check mr-3"></i>일정 및 미션</h2>
+            <div id="schedule-render" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
         </section>
 
-        <!-- GROWTH -->
+        <!-- 성장 & VIP -->
         <section id="growth" class="hidden">
-            <h2 class="text-3xl font-display mb-6">성장 & VIP</h2>
-            <div class="glass-card p-6 rounded-3xl overflow-hidden mb-6">
-                <h3 class="font-bold text-lg mb-4 text-brand-600">VIP 등급 혜택</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-100 dark:bg-gray-800">
-                            <tr><th class="px-3 py-2 text-left">등급</th><th class="px-3 py-2 text-left">금액</th><th class="px-3 py-2 text-left">혜택</th></tr>
-                        </thead>
-                        <tbody id="vip-table-body" class="divide-y divide-gray-100 dark:divide-gray-700"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="glass-card p-6 rounded-3xl">
-                <h3 class="font-bold mb-4">레벨별 녹턴 보상</h3>
-                <div class="h-64 overflow-y-auto custom-scrollbar" id="nocturne-list"></div>
-            </div>
+            <h2 class="text-3xl font-display mb-8"><i class="fas fa-trending-up mr-3"></i>성장 가이드</h2>
+            <div class="glass-card p-6 rounded-3xl mb-8 overflow-x-auto" id="vip-render"></div>
+            <div class="glass-card p-6 rounded-3xl" id="nocturne-render"></div>
         </section>
 
-        <!-- DECK -->
+        <!-- 시스템 & 정답 -->
+        <section id="systems" class="hidden">
+            <h2 class="text-3xl font-display mb-8"><i class="fas fa-gamepad mr-3"></i>시스템 및 미니게임</h2>
+            <div class="space-y-8" id="systems-render"></div>
+        </section>
+
+        <!-- 덱 도감 -->
         <section id="deck" class="hidden">
-            <h2 class="text-3xl font-display mb-6">최강 덱 도감</h2>
-            <div id="deck-container" class="space-y-8"></div>
+            <h2 class="text-3xl font-display mb-8"><i class="fas fa-users mr-3"></i>추천 덱 도감</h2>
+            <div id="deck-render" class="space-y-12"></div>
         </section>
 
-        <!-- CALCULATOR -->
+        <!-- 계산기 -->
         <section id="calculator" class="hidden">
-            <h2 class="text-3xl font-display mb-6">격추 점수 계산기</h2>
-            <div class="max-w-md mx-auto glass-card p-8 rounded-3xl shadow-xl">
-                <label class="block mb-2 font-bold">격추율 입력 (%)</label>
-                <input type="number" id="calc-percent" oninput="updateCalc()" placeholder="예: 40" class="w-full bg-gray-50 dark:bg-gray-900 border rounded-xl py-4 px-4 text-2xl text-center outline-none">
-                <div class="mt-6 bg-gray-900 rounded-xl p-6 text-center text-white">
-                    <p class="text-gray-400 text-xs mb-1">예상 점수</p>
-                    <div id="calc-result" class="text-4xl font-bold">85,500 점</div>
+            <h2 class="text-3xl font-display mb-8"><i class="fas fa-calculator mr-3"></i>격추 점수 계산기</h2>
+            <div class="max-w-md mx-auto glass-card p-10 rounded-3xl text-center">
+                <p class="mb-4 font-bold text-gray-500">격추율 입력 (%)</p>
+                <input type="number" id="calc-input" oninput="runCalc()" placeholder="예: 40" class="w-full bg-gray-100 dark:bg-gray-800 text-3xl font-bold py-4 rounded-2xl text-center mb-6 outline-none focus:ring-4 ring-brand-500/20">
+                <div class="bg-gray-900 text-white p-8 rounded-2xl">
+                    <p class="text-xs opacity-50 mb-2">예상 점수</p>
+                    <div id="calc-result" class="text-4xl font-bold text-brand-400">85,500</div>
                 </div>
             </div>
         </section>
@@ -153,158 +117,191 @@
     </main>
 
     <script>
-        /**
-         * 1. 데이터 설정 (매우 중요!)
-         * 깃허브의 raw 파일 주소를 여기에 입력하세요.
-         * 주소 형식 예: https://raw.githubusercontent.com/사용자명/레포명/main/data.json
+        /** * [필독] 깃허브 URL 설정 
+         * GitHub 레포지토리의 data.json Raw 주소를 여기에 넣으세요.
          */
-        const GITHUB_JSON_URL = "https://raw.githubusercontent.com/your-username/your-repo/main/data.json"; 
+        const DATA_URL = "https://raw.githubusercontent.com/your-username/your-repo/main/data.json"; 
         
-        let GAME_DATA = null;
+        let DATA = null;
 
-        /**
-         * 2. 데이터 불러오기 로직
-         */
-        async function fetchGameData() {
+        async function init() {
             try {
-                // 1. 깃허브에서 데이터 가져오기 시도
-                const response = await fetch(GITHUB_JSON_URL);
-                if (!response.ok) throw new Error("Fetch failed");
-                GAME_DATA = await response.json();
-                
-                initSite(); // 사이트 초기화
-            } catch (err) {
-                console.warn("External data failed. Using internal fallback for demo.");
-                document.getElementById('error-hint').classList.remove('hidden');
-                
-                // [선택 사항] 깃허브 연동 실패 시 보여줄 임시 로컬 데이터 (테스트용)
-                GAME_DATA = { 
-                    vipBenefits: [{grade:"광고제거", total:"9,900", benefits:"광고제거"}],
-                    decks: { myth1: [{title:"고양이 덱", members:"멤버 정보", runes:"룬 정보", desc:"설명"}] },
-                    nocturneRewards: [{lv:1, r:"동료뽑 600"}],
-                    synthesisMissions: { generalRunes: ["합성 미션 1"] }
-                };
-                setTimeout(initSite, 1500);
+                const res = await fetch(DATA_URL);
+                if (!res.ok) throw new Error();
+                DATA = await res.json();
+                renderAll();
+            } catch (e) {
+                alert("데이터 로드 실패! 깃허브 주소를 확인해주세요.");
+            } finally {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
             }
         }
 
-        function initSite() {
-            renderVIP();
-            renderDecks();
-            renderNocturne();
+        function renderAll() {
+            if (!DATA) return;
             renderSchedule();
-            
-            // 로딩 화면 제거 및 로그인 화면 표시
-            document.getElementById('loader').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                if (!sessionStorage.isLoggedIn) {
-                    document.getElementById('login-overlay').classList.remove('hidden');
-                }
-            }, 500);
+            renderGrowth();
+            renderSystems();
+            renderDecks();
         }
 
-        /**
-         * 3. 렌더링 함수들
-         */
-        function renderVIP() {
-            const tbody = document.getElementById('vip-table-body');
-            tbody.innerHTML = (GAME_DATA.vipBenefits || []).map(v => `
-                <tr class="${v.highlight ? 'bg-brand-50/50 dark:bg-brand-900/10' : ''}">
-                    <td class="px-3 py-3 font-bold">${v.grade}</td>
-                    <td class="px-3 py-3 text-brand-600">${v.total}원</td>
-                    <td class="px-3 py-3 text-xs text-gray-500">${v.benefits}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderDecks() {
-            const container = document.getElementById('deck-container');
-            const sections = { myth1: '1신화', myth2: '2신화', myth3: '3신화' };
-            
-            for (let id in sections) {
-                const decks = GAME_DATA.decks?.[id] || [];
-                const sectionHtml = `
-                    <div class="mb-10">
-                        <h3 class="font-bold text-xl mb-4 border-l-4 border-blue-500 pl-3">${sections[id]} 추천 조합</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            ${decks.map(d => `
-                                <div class="glass-card p-5 rounded-2xl">
-                                    <h4 class="font-bold text-lg mb-2">${d.title}</h4>
-                                    <div class="text-xs space-y-1 bg-gray-50 dark:bg-black/20 p-3 rounded-lg mb-2">
-                                        <p><strong>멤버:</strong> ${d.members}</p>
-                                        <p><strong>룬:</strong> ${d.runes}</p>
-                                    </div>
-                                    <p class="text-xs italic text-gray-400">"${d.desc}"</p>
-                                </div>
-                            `).join('')}
+        // 1. 일정 및 미션 렌더링
+        function renderSchedule() {
+            const container = document.getElementById('schedule-render');
+            const miss = DATA.synthesisMissions;
+            container.innerHTML = `
+                <div class="glass-card p-6 rounded-3xl border-t-4 border-blue-500">
+                    <h3 class="font-bold text-xl mb-4 text-blue-600">💎 선택 룬 미션</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong>희귀:</strong> ${miss.specialRunes.rare}</p>
+                        <p><strong>영웅:</strong> ${miss.specialRunes.hero}</p>
+                        <p><strong>전설:</strong> ${miss.specialRunes.legend}</p>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl border-t-4 border-green-500">
+                    <h3 class="font-bold text-xl mb-4 text-green-600">🔄 합성 & 장비 미션</h3>
+                    <div class="grid grid-cols-1 gap-4 text-xs">
+                        <div class="bg-white/50 dark:bg-black/20 p-4 rounded-xl">
+                            <h4 class="font-bold mb-2">룬 미션</h4>
+                            ${miss.generalRunes.map(r => `<div>• ${r}</div>`).join('')}
+                        </div>
+                        <div class="bg-white/50 dark:bg-black/20 p-4 rounded-xl">
+                            <h4 class="font-bold mb-2">장비 미션</h4>
+                            ${miss.equipment.map(e => `<div>• ${e}</div>`).join('')}
                         </div>
                     </div>
-                `;
-                container.innerHTML += sectionHtml;
-            }
-        }
-
-        function renderNocturne() {
-            const list = document.getElementById('nocturne-list');
-            list.innerHTML = (GAME_DATA.nocturneRewards || []).map(n => `
-                <div class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800 text-sm">
-                    <span class="font-mono text-brand-500 font-bold">Lv.${n.lv}</span>
-                    <span>${n.r}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderSchedule() {
-            const container = document.getElementById('schedule-content');
-            const missions = GAME_DATA.synthesisMissions || {};
-            container.innerHTML = `
-                <div class="glass-card p-6 rounded-3xl">
-                    <h3 class="font-bold text-lg mb-4 text-blue-600"><i class="fas fa-gem mr-2"></i>합성 미션 리스트</h3>
-                    <ul class="space-y-2 text-sm">
-                        ${(missions.generalRunes || []).map(m => `<li>• ${m}</li>`).join('')}
-                    </ul>
                 </div>
             `;
         }
 
-        /**
-         * 4. 인터랙션 로직
-         */
+        // 2. 성장 및 VIP 렌더링
+        function renderGrowth() {
+            const vipWrap = document.getElementById('vip-render');
+            vipWrap.innerHTML = `
+                <h3 class="font-bold text-xl mb-4 text-brand-600">VIP 등급별 혜택</h3>
+                <table class="w-full text-sm">
+                    <thead><tr class="text-left opacity-50 border-b"><th class="py-2">등급</th><th>누적</th><th>상세 혜택</th></tr></thead>
+                    <tbody>${DATA.vipBenefits.map(v => `
+                        <tr class="border-b dark:border-gray-800 ${v.highlight ? 'bg-brand-500/10' : ''}">
+                            <td class="py-3 font-bold">${v.grade}</td>
+                            <td class="text-brand-600 font-bold">${v.total}</td>
+                            <td class="text-xs text-gray-500">${v.benefits}</td>
+                        </tr>
+                    `).join('')}</tbody>
+                </table>
+            `;
+
+            const nocWrap = document.getElementById('nocturne-render');
+            nocWrap.innerHTML = `
+                <h3 class="font-bold text-xl mb-4">레벨별 녹턴 보상</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 h-80 overflow-y-auto custom-scrollbar p-2">
+                    ${DATA.nocturneRewards.map(n => `
+                        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl text-xs border border-gray-100 dark:border-gray-700">
+                            <div class="font-mono text-brand-500 font-bold">Lv.${n.lv}</div>
+                            <div>${n.r}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 3. 시스템 및 정답 렌더링
+        function renderSystems() {
+            const container = document.getElementById('systems-render');
+            const acad = DATA.academyAnswers;
+            
+            let html = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-card p-6 rounded-3xl">
+                        <h3 class="font-bold text-xl mb-4 text-purple-600"><i class="fas fa-brain mr-2"></i>마법 아카데미 정답</h3>
+                        <div class="space-y-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
+                            ${Object.keys(acad).map(key => `
+                                <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                                    <h4 class="font-bold text-sm mb-2 text-purple-700 uppercase">${key}</h4>
+                                    ${acad[key].map(q => `
+                                        <div class="text-[10px] mb-2 border-l-2 border-purple-200 pl-2">
+                                            <div class="text-gray-400 italic">"${q.script}"</div>
+                                            <div class="font-bold">L: ${q.left} / R: ${q.right}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 rounded-3xl">
+                        <h3 class="font-bold text-xl mb-4 text-amber-600"><i class="fas fa-trophy mr-2"></i>히든 트로피</h3>
+                        <div class="grid grid-cols-1 gap-2 text-xs">
+                            ${DATA.hiddenTrophies.map(t => `<div class="p-2 bg-amber-50 dark:bg-amber-900/10 rounded-lg">• ${t}</div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl border-t-4 border-red-500">
+                    <h3 class="font-bold text-xl mb-4 text-red-600"><i class="fas fa-bolt mr-2"></i>신화 각성 정보</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+                        ${DATA.awakeningStats.myth.map(a => `
+                            <div class="p-3 bg-red-50 dark:bg-red-900/10 rounded-xl text-center">
+                                <div class="text-xs font-bold">${a.step}</div>
+                                <div class="text-lg font-display text-red-500">${a.val}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // 4. 덱 도감 렌더링
+        function renderDecks() {
+            const container = document.getElementById('deck-render');
+            const types = { myth1: '1신화', myth2: '2신화', myth3: '3신화' };
+            container.innerHTML = Object.keys(types).map(key => `
+                <div>
+                    <h3 class="text-2xl font-display mb-6 border-l-8 border-brand-500 pl-4">${types[key]} 추천</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        ${DATA.decks[key].map(d => `
+                            <div class="glass-card p-6 rounded-3xl hover:scale-[1.02] transition-transform">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-xl">🐱</div>
+                                    <h4 class="font-bold text-lg leading-tight">${d.title}</h4>
+                                </div>
+                                <div class="space-y-3 text-xs bg-gray-50 dark:bg-black/20 p-4 rounded-2xl mb-4">
+                                    <p><strong>구성:</strong> ${d.members}</p>
+                                    <p><strong>스킬:</strong> ${d.skills}</p>
+                                    <p class="text-brand-600"><strong>룬:</strong> ${d.runes}</p>
+                                </div>
+                                <p class="text-xs italic text-gray-400">"${d.desc}"</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 공통 로직
         function checkPassword() {
-            const input = document.getElementById('password-input').value;
-            if (input === '라임 최고') { 
+            if (document.getElementById('password-input').value === '라임 최고') {
                 document.getElementById('login-overlay').style.display = 'none';
                 sessionStorage.isLoggedIn = 'true';
             } else {
-                document.getElementById('login-msg').innerText = '비밀번호가 틀렸습니다.';
+                document.getElementById('login-msg').innerText = '암호가 일치하지 않습니다.';
             }
         }
+        if (sessionStorage.isLoggedIn) document.getElementById('login-overlay').style.display = 'none';
 
         function openSection(id) {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
-            document.querySelectorAll('.sidebar-btn').forEach(b => {
-                b.classList.toggle('sidebar-active', b.dataset.target === id);
-            });
+            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.toggle('sidebar-active', b.dataset.target === id));
             window.scrollTo(0, 0);
         }
 
-        function updateCalc() {
-            const val = parseFloat(document.getElementById('calc-percent').value);
-            const score = isNaN(val) ? 85500 : (val * 300) + 85500;
-            document.getElementById('calc-result').innerText = score.toLocaleString() + " 점";
+        function runCalc() {
+            const val = parseFloat(document.getElementById('calc-input').value);
+            document.getElementById('calc-result').innerText = (isNaN(val) ? 85500 : (val * 300) + 85500).toLocaleString();
         }
 
-        function goHome() { openSection('home-screen'); }
-
-        // 테마 토글
-        document.getElementById('mobile-theme-toggle').onclick = () => {
-            document.documentElement.classList.toggle('dark');
-        };
-
-        // 데이터 로드 시작
-        window.onload = fetchGameData;
+        window.onload = init;
     </script>
 </body>
 </html>
