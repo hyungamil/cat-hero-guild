@@ -1,87 +1,299 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>캣히어로 가이드 사이트</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>캣히어로 : 가이드</title>
+    <!-- 외부 라이브러리 로드 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                        display: ['Black Han Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            400: '#4ade80',
+                            500: '#22c55e', 
+                            600: '#16a34a',
+                            glow: '#00ff9d',
+                        },
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'shine': 'shine 2s infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slight': 'bounce-slight 0.5s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        },
+                        shine: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
+                        },
+                        'bounce-slight': {
+                            '0%, 100%': { transform: 'translateY(-5%)' },
+                            '50%': { transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .bg-pattern { background-color: #f8fafc; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+        .readable-text { line-height: 1.6; letter-spacing: -0.01em; word-break: keep-all; }
+        .bg-pattern { 
+            background-color: #f8fafc; 
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px); 
+            background-size: 24px 24px; 
+        }
+        .dark .bg-pattern { 
+            background-color: #0f172a; 
+            background-image: radial-gradient(#334155 1px, transparent 1px); 
+        }
+
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.6); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+        }
+        .dark .glass-card { 
+            background: rgba(30, 41, 59, 0.85); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        
+        .page-enter { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sidebar-active { 
+            background: rgba(34, 197, 94, 0.1); 
+            color: #16a34a; 
+            border-right: 3px solid #16a34a; 
+        }
+        .dark .sidebar-active { 
+            background: rgba(74, 222, 128, 0.1); 
+            color: #4ade80; 
+            border-right: 3px solid #4ade80; 
+        }
+
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #111827; z-index: 9999; display: flex;
+            align-items: center; justify-content: center; backdrop-filter: blur(8px);
+        }
+        .login-card {
+            background: rgba(31, 41, 55, 0.95); padding: 2rem; border-radius: 1.5rem;
+            border: 1px solid rgba(34, 197, 94, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            text-align: center; width: 90%; max-width: 360px;
+        }
+
+        #payment-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); z-index: 9998; display: flex;
+            align-items: center; justify-content: center; backdrop-filter: blur(4px);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        #payment-modal.active { opacity: 1; pointer-events: auto; }
+        .payment-content { transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        #payment-modal.active .payment-content { transform: scale(1); }
+
+        .floating-btn { position: fixed; bottom: 80px; right: 20px; z-index: 50; }
+        @media (min-width: 768px) { .floating-btn { bottom: 30px; right: 30px; } }
     </style>
 </head>
-<body class="bg-pattern min-h-screen p-6 md:p-10 font-sans">
+<body class="bg-pattern min-h-screen text-gray-800 transition-colors duration-300 dark:text-gray-100 font-sans overflow-x-hidden readable-text">
 
-    <div class="max-w-4xl mx-auto">
-        <!-- 헤더 영역 -->
-        <header class="flex justify-between items-center mb-12">
-            <div>
-                <h1 id="site-title" class="text-3xl font-black text-indigo-600 mb-1">로딩 중...</h1>
-                <p id="site-author" class="text-gray-400 text-sm font-bold"></p>
+    <!-- PASSWORD LOGIN OVERLAY -->
+    <div id="login-overlay">
+        <div class="login-card relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-brand-500"></div>
+            <div class="w-16 h-16 rounded-2xl bg-brand-900/30 border border-brand-500/30 flex items-center justify-center text-brand-500 text-3xl mx-auto mb-5">
+                <i class="fas fa-lock"></i>
             </div>
-            <a href="../admin/admin.html" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-500 transition">
-                <i class="fas fa-cog"></i> 관리자
-            </a>
-        </header>
-
-        <!-- 덱 리스트 영역 -->
-        <section class="mb-16">
-            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                <i class="fas fa-layer-group text-indigo-500"></i> 추천 덱 리스트
-            </h2>
-            <div id="deck-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- 데이터 로드 위치 -->
+            <h2 class="text-xl font-display text-white mb-4 tracking-wide">🔒 [라임] 길드원 전용 공간</h2>
+            <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4 mb-6 text-center">
+                <p class="text-gray-300 text-sm leading-relaxed">
+                    이곳은 <strong class="text-brand-400">라임 길드원</strong>들을 위한<br>소중한 아지트입니다.
+                </p>
             </div>
-        </section>
-
-        <!-- 녹턴 보상 요약 영역 -->
-        <section>
-            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                <i class="fas fa-gift text-rose-500"></i> 주요 녹턴 보상
-            </h2>
-            <div id="nocturne-summary" class="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100 overflow-hidden shadow-sm">
-                <!-- 데이터 로드 위치 -->
-            </div>
-        </section>
+            <!-- 수정한 부분: type을 "password"에서 "text"로 변경하여 입력 내용이 보이도록 함 -->
+            <input type="text" id="password-input" placeholder="암호 입력" 
+                class="w-full bg-gray-900 border border-gray-600 rounded-lg py-3 px-4 text-white text-center text-lg mb-4 focus:outline-none focus:border-brand-500 transition-all placeholder-gray-600"
+                autocomplete="off"
+                onkeypress="if(event.key === 'Enter') checkPassword()">
+            <button onclick="checkPassword()" 
+                class="w-full bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold py-3 rounded-lg shadow-lg transform transition active:scale-95 border border-brand-500/30">
+                입장하기
+            </button>
+            <p id="login-msg" class="text-rose-400 text-xs mt-3 h-4 font-bold"></p>
+        </div>
     </div>
 
-    <!-- 데이터 연동 스크립트 -->
-    <script type="module">
-        // 상대 경로(../data/data.js)를 사용하여 데이터 파일을 불러옵니다.
-        import { siteConfig, deckData, nocturneData } from '../data/data.js';
+    <!-- PC 사이드바 -->
+    <aside class="hidden md:flex fixed top-0 left-0 h-full w-64 glass-card flex-col z-50">
+        <div class="p-6 flex items-center gap-3 cursor-pointer" onclick="goHome()">
+            <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-lg">
+                <i class="fas fa-cat text-xl"></i>
+            </div>
+            <div>
+                <span class="font-display text-xl tracking-tight uppercase">Cat Hero</span>
+                <span class="text-[10px] block text-gray-400 font-black uppercase">Guide Wiki</span>
+            </div>
+        </div>
+        
+        <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto scrollbar-hide">
+            <button onclick="openSection('home-screen')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3 sidebar-active" data-target="home-screen">
+                <i class="fas fa-home w-6 text-center"></i> 홈
+            </button>
+            <button onclick="openSection('deck')" class="sidebar-btn w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-3" data-target="deck">
+                <i class="fas fa-layer-group w-6 text-center"></i> 덱 도감
+            </button>
+            <div class="my-4 border-t border-gray-100 dark:border-gray-800"></div>
+            <a href="admin/admin.html" class="w-full text-left p-3 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-900/20 text-rose-500 transition flex items-center gap-3">
+                <i class="fas fa-user-shield w-6 text-center"></i> 관리자 모드
+            </a>
+        </nav>
 
-        window.onload = () => {
-            // 1. 헤더 설정
-            document.getElementById('site-title').innerText = siteConfig.title;
-            document.getElementById('site-author').innerText = "By " + siteConfig.author;
+        <div class="p-4 border-t border-gray-100 dark:border-gray-800">
+            <button onclick="toggleTheme()" class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center gap-2 hover:bg-gray-200 transition text-sm font-bold">
+                <i class="fas fa-moon"></i> 다크모드 전환
+            </button>
+        </div>
+    </aside>
 
-            // 2. 덱 렌더링 (예시로 1신화 덱만 출력)
-            const deckContainer = document.getElementById('deck-container');
-            deckData['1myth'].forEach(deck => {
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="pt-10 md:pl-72 px-4 w-full max-w-7xl mx-auto relative z-10 min-h-screen">
+        
+        <!-- 0. 홈 화면 -->
+        <section id="home-screen" class="page-enter">
+            <div class="py-10 flex flex-col md:flex-row items-center gap-8">
+                <div class="w-32 h-32 rounded-full bg-brand-500 flex items-center justify-center text-white text-5xl shadow-2xl animate-bounce-slight">
+                    <i class="fas fa-cat"></i>
+                </div>
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl md:text-5xl font-display mb-3">환영합니다! <br><span class="text-brand-500">라임</span> 길드 아지트</h1>
+                    <p class="text-gray-500 font-medium leading-relaxed">캣히어로 최신 공략과 덱 도감을 <br class="md:hidden">한눈에 확인하실 수 있습니다.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+                <div onclick="openSection('deck')" class="glass-card p-6 rounded-3xl border-t-4 border-amber-500 hover:scale-[1.03] transition-all cursor-pointer">
+                    <h3 class="font-bold text-lg mb-2">추천 덱 도감</h3>
+                    <p class="text-sm text-gray-500">신화 등급별 최강 효율 덱 정보를 확인하세요.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. 덱 도감 섹션 -->
+        <section id="deck" class="hidden page-enter">
+            <h2 class="text-3xl font-display mb-8 text-gray-800 dark:text-white border-b-2 border-brand-500 pb-2 inline-block">최강 덱 도감</h2>
+            <div id="deck-list-render" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 데이터가 이곳에 렌더링됩니다 -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- [1. 임시 데이터 섹션] ---
+        const deckData = {
+            '1myth': [
+                { title: '🐱 고양이 덱 1 (가성비)', members: '캣머신, 스타링, 룰루, 로로, 잭스트라이커, 잭타이거', desc: '가장 기본적인 전설덱. 무과금 유저에게 추천합니다.' },
+                { title: '🏴‍☠️ 해적 덱 1 (무난)', members: '카르툰, 잭스트라이커, 잭타이거, 잭플라이, 스타링, 블랙핀', desc: '가장 무난한 덱. 지속성이 좋아 포탄세례를 무한 유지하기 좋습니다.' }
+            ],
+            '2myth': [
+                { title: '🐱 고양이 덱 1 (오라클)', members: '오라클, 쿠무루, 룰루, 로로, 스타링, 잭스트라이커', desc: '쿠무루와 오라클 시너지로 2신화 단계 최고점을 찍을 수 있는 덱입니다.' }
+            ]
+        };
+
+        // --- [2. 핵심 로직] ---
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            const msg = document.getElementById('login-msg');
+            
+            if (input === '라임 최고') {
+                document.getElementById('login-overlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('login-overlay').style.display = 'none';
+                }, 500);
+                sessionStorage.setItem('lime_auth', 'true');
+            } else {
+                msg.innerText = "비밀번호가 일치하지 않습니다!";
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-input').focus();
+            }
+        }
+
+        // 세션 유지 확인
+        if (sessionStorage.getItem('lime_auth') === 'true') {
+            document.getElementById('login-overlay').style.display = 'none';
+        }
+
+        function openSection(id) {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            
+            // 사이드바 버튼 상태 업데이트
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.classList.remove('sidebar-active');
+                if(btn.dataset.target === id) btn.classList.add('sidebar-active');
+            });
+            window.scrollTo(0,0);
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function goHome() { openSection('home-screen'); }
+
+        // 데이터 렌더링 함수
+        function renderDecks() {
+            const container = document.getElementById('deck-list-render');
+            if(!container) return;
+            
+            // 모든 덱 데이터를 합쳐서 렌더링
+            const allDecks = [...deckData['1myth'], ...deckData['2myth']];
+            
+            allDecks.forEach(deck => {
                 const card = document.createElement('div');
-                card.className = "glass-card p-5 rounded-2xl hover:scale-[1.02] transition-transform cursor-default";
+                card.className = "glass-card p-6 rounded-[2rem] border-t-2 border-brand-400 hover:shadow-lg transition-all duration-300";
                 card.innerHTML = `
-                    <h3 class="font-bold text-indigo-900 mb-2">${deck.title}</h3>
-                    <p class="text-xs text-gray-500 mb-3">${deck.desc}</p>
-                    <div class="text-xs bg-indigo-50 p-2 rounded-lg text-indigo-700">
-                        <strong>멤버:</strong> ${deck.members}
+                    <h3 class="font-bold text-lg mb-3 text-indigo-900 dark:text-brand-400">${deck.title}</h3>
+                    <p class="text-xs text-gray-500 mb-4 leading-relaxed italic">"${deck.desc}"</p>
+                    <div class="bg-brand-50 dark:bg-brand-900/20 p-4 rounded-2xl text-sm border border-brand-100 dark:border-brand-800">
+                        <strong class="text-brand-600 block mb-1 underline">추천 멤버</strong>
+                        <span class="text-gray-700 dark:text-gray-300">${deck.members}</span>
                     </div>
                 `;
-                deckContainer.appendChild(card);
+                container.appendChild(card);
             });
+        }
 
-            // 3. 녹턴 요약 렌더링
-            const nocturneSummary = document.getElementById('nocturne-summary');
-            nocturneData.filter(item => item.star3).forEach(item => {
-                const div = document.createElement('div');
-                div.className = "p-4 flex justify-between items-center bg-rose-50/30";
-                div.innerHTML = `
-                    <span class="font-mono font-bold text-rose-600">Lv.${item.lv}</span>
-                    <span class="text-sm font-medium text-gray-700">${item.r} ✨</span>
-                `;
-                nocturneSummary.appendChild(div);
-            });
+        window.onload = () => {
+            renderDecks();
         };
     </script>
 </body>
