@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캣히어로 : 관리자 모드</title>
+    <!-- 디자인 스타일: 테일윈드 CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 아이콘: 폰트어썸 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .admin-bg {
+            background-color: #0f172a;
+            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
+</head>
+<body class="admin-bg min-h-screen text-slate-200 font-sans p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- 상단 헤더 -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 border-b border-slate-800 pb-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
+                    <i class="fas fa-user-shield text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-white tracking-tight">데이터 컨트롤 센터</h1>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Cat Hero Guide Admin</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <a href="index.html" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-bold transition flex items-center gap-2 border border-slate-700">
+                    <i class="fas fa-external-link-alt text-xs"></i> 라이브 사이트 보기
+                </a>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- 왼쪽: 데이터 입력 섹션 (4칸) -->
+            <section class="lg:col-span-5 space-y-6">
+                <div class="bg-slate-900/80 border border-slate-800 p-6 md:p-8 rounded-[2rem] shadow-2xl backdrop-blur-sm">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <i class="fas fa-plus-circle text-indigo-500"></i> 새로운 덱 정보 등록
+                    </h2>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase">신화 등급 분류</label>
+                            <select id="deck-myth" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-white">
+                                <option value="1myth">1신화 덱</option>
+                                <option value="2myth">2신화 덱</option>
+                                <option value="3myth">3신화 덱</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase">덱 타이틀</label>
+                            <input type="text" id="deck-title" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-white" placeholder="예: 🐱 고양이 가성비 덱">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase">추천 멤버 (쉼표 구분)</label>
+                            <input type="text" id="deck-members" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-white" placeholder="예: 캣머신, 스타링, 룰루">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase">상세 공략 정보</label>
+                            <textarea id="deck-desc" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3.5 h-32 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-white custom-scrollbar" placeholder="이 덱의 운영법이나 특징을 입력하세요."></textarea>
+                        </div>
+
+                        <button onclick="handleSave()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 group">
+                            <i class="fas fa-save group-hover:scale-110 transition-transform"></i> 데이터 저장하기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 시스템 로그/안내 -->
+                <div class="bg-indigo-950/20 border border-indigo-500/20 p-5 rounded-2xl">
+                    <p class="text-xs leading-relaxed text-indigo-300/70">
+                        <i class="fas fa-info-circle mr-1"></i> 
+                        현재 페이지는 <strong>로컬 세션 모드</strong>로 작동합니다. 저장 버튼을 누르면 목록에 즉시 추가되며, 나중에 파이어베이스 DB를 연결하면 서버에 실제 저장되도록 확장 가능합니다.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 오른쪽: 데이터 관리 목록 (7칸) -->
+            <section class="lg:col-span-7 space-y-6">
+                <div class="flex justify-between items-end mb-2">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-list-ul text-amber-500"></i> 등록된 덱 리스트
+                    </h2>
+                    <span id="deck-count" class="text-xs font-mono bg-slate-800 px-2 py-1 rounded text-slate-400">Total: 0</span>
+                </div>
+
+                <div id="admin-list-container" class="space-y-3 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+                    <!-- 데이터가 자바스크립트로 생성됩니다 -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 로직 스크립트 -->
+    <script>
+        // 1. 초기 샘플 데이터 (나중에 DB 연결 시 이 부분은 서버에서 가져옵니다)
+        let localDeckData = {
+            '1myth': [
+                { id: 1, title: '🐱 고양이 덱 1 (가성비)', members: '캣머신, 스타링, 룰루', desc: '초보자에게 가장 추천하는 덱입니다.' },
+                { id: 2, title: '🐱 고양이 덱 2 (효율)', members: '캣틀쉽, 캣머신, 스타링', desc: '1신화에서 가장 높은 효율을 자랑합니다.' }
+            ],
+            '2myth': [
+                { id: 3, title: '🏴‍☠️ 해적 덱 1 (국밥)', members: '잭모어, 잭블루, 잭도우', desc: '2신화 최고의 안정성을 가진 덱입니다.' }
+            ],
+            '3myth': []
+        };
+
+        // 2. 화면에 목록 그리기 함수
+        function renderAdminList() {
+            const container = document.getElementById('admin-list-container');
+            container.innerHTML = '';
+            let total = 0;
+
+            ['1myth', '2myth', '3myth'].forEach(category => {
+                localDeckData[category].forEach(deck => {
+                    total++;
+                    const item = document.createElement('div');
+                    item.className = "bg-slate-900 border border-slate-800 p-5 rounded-2xl flex justify-between items-start hover:border-slate-700 transition-colors group";
+                    item.innerHTML = `
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 uppercase tracking-tighter">${category}</span>
+                                <h3 class="font-bold text-white">${deck.title}</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 line-clamp-1">${deck.desc}</p>
+                            <p class="text-[11px] text-slate-400"><i class="fas fa-users mr-1"></i>${deck.members}</p>
+                        </div>
+                        <button onclick="deleteDeck('${category}', ${deck.id})" class="text-slate-600 hover:text-red-500 p-2 transition-colors">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    `;
+                    container.appendChild(item);
+                });
+            });
+
+            document.getElementById('deck-count').innerText = `Total: ${total}`;
+            if(total === 0) {
+                container.innerHTML = `<div class="py-20 text-center text-slate-600 italic">등록된 데이터가 없습니다.</div>`;
+            }
+        }
+
+        // 3. 데이터 저장 핸들러
+        function handleSave() {
+            const myth = document.getElementById('deck-myth').value;
+            const title = document.getElementById('deck-title').value;
+            const members = document.getElementById('deck-members').value;
+            const desc = document.getElementById('deck-desc').value;
+
+            if (!title || !members) {
+                alert("덱 제목과 추천 멤버는 필수 입력 사항입니다!");
+                return;
+            }
+
+            // 새 데이터 객체 생성
+            const newDeck = {
+                id: Date.now(), // 고유 아이디로 현재 시간 사용
+                title,
+                members,
+                desc: desc || "설명이 등록되지 않았습니다."
+            };
+
+            // 데이터 추가
+            localDeckData[myth].push(newDeck);
+
+            // 입력창 초기화
+            document.getElementById('deck-title').value = '';
+            document.getElementById('deck-members').value = '';
+            document.getElementById('deck-desc').value = '';
+
+            // 목록 새로고침
+            renderAdminList();
+            
+            // 성공 피드백 (간단한 알림)
+            console.log("데이터 추가됨:", newDeck);
+        }
+
+        // 4. 데이터 삭제 핸들러
+        function deleteDeck(category, id) {
+            if (confirm("이 덱 정보를 정말로 삭제할까요?")) {
+                localDeckData[category] = localDeckData[category].filter(d => d.id !== id);
+                renderAdminList();
+            }
+        }
+
+        // 초기 실행
+        renderAdminList();
+    </script>
+</body>
+</html>

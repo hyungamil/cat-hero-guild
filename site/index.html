@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캣히어로 가이드 사이트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .bg-pattern { background-color: #f8fafc; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen p-6 md:p-10 font-sans">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- 헤더 영역 -->
+        <header class="flex justify-between items-center mb-12">
+            <div>
+                <h1 id="site-title" class="text-3xl font-black text-indigo-600 mb-1">로딩 중...</h1>
+                <p id="site-author" class="text-gray-400 text-sm font-bold"></p>
+            </div>
+            <a href="../admin/admin.html" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-500 transition">
+                <i class="fas fa-cog"></i> 관리자
+            </a>
+        </header>
+
+        <!-- 덱 리스트 영역 -->
+        <section class="mb-16">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <i class="fas fa-layer-group text-indigo-500"></i> 추천 덱 리스트
+            </h2>
+            <div id="deck-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 데이터 로드 위치 -->
+            </div>
+        </section>
+
+        <!-- 녹턴 보상 요약 영역 -->
+        <section>
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <i class="fas fa-gift text-rose-500"></i> 주요 녹턴 보상
+            </h2>
+            <div id="nocturne-summary" class="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100 overflow-hidden shadow-sm">
+                <!-- 데이터 로드 위치 -->
+            </div>
+        </section>
+    </div>
+
+    <!-- 데이터 연동 스크립트 -->
+    <script type="module">
+        // 상대 경로(../data/data.js)를 사용하여 데이터 파일을 불러옵니다.
+        import { siteConfig, deckData, nocturneData } from '../data/data.js';
+
+        window.onload = () => {
+            // 1. 헤더 설정
+            document.getElementById('site-title').innerText = siteConfig.title;
+            document.getElementById('site-author').innerText = "By " + siteConfig.author;
+
+            // 2. 덱 렌더링 (예시로 1신화 덱만 출력)
+            const deckContainer = document.getElementById('deck-container');
+            deckData['1myth'].forEach(deck => {
+                const card = document.createElement('div');
+                card.className = "glass-card p-5 rounded-2xl hover:scale-[1.02] transition-transform cursor-default";
+                card.innerHTML = `
+                    <h3 class="font-bold text-indigo-900 mb-2">${deck.title}</h3>
+                    <p class="text-xs text-gray-500 mb-3">${deck.desc}</p>
+                    <div class="text-xs bg-indigo-50 p-2 rounded-lg text-indigo-700">
+                        <strong>멤버:</strong> ${deck.members}
+                    </div>
+                `;
+                deckContainer.appendChild(card);
+            });
+
+            // 3. 녹턴 요약 렌더링
+            const nocturneSummary = document.getElementById('nocturne-summary');
+            nocturneData.filter(item => item.star3).forEach(item => {
+                const div = document.createElement('div');
+                div.className = "p-4 flex justify-between items-center bg-rose-50/30";
+                div.innerHTML = `
+                    <span class="font-mono font-bold text-rose-600">Lv.${item.lv}</span>
+                    <span class="text-sm font-medium text-gray-700">${item.r} ✨</span>
+                `;
+                nocturneSummary.appendChild(div);
+            });
+        };
+    </script>
+</body>
+</html>
